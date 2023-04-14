@@ -100,5 +100,56 @@ Alternativni tok:
 
 #### Dokumentiranje tur
 
+Povzetek funkcionalnosti:
+
+Registriran uporabnik ima možnost dokumentiranja ture, kar pomeni da aplikacija aktivno beleži in shranjuje trenutno lokacijo.
+
+Osnovni tok:
+
+1. Uporabnik gre na zaslonsko masko zemljevida in klikne na gumb "Sledi"
+2. V primeru da je uporabnik aplikaciji že dal dovoljenje za dostop do lokacije, aplikacija začne beležiti trenutno lokacijo, drugače se uporabniku prikaže pojavno okno z zahtevo po dovoljenju za dostop do lokacije
+3. Aplikacija sproti izrisuje opravljeno pot na zemljevidu
+4. Uporabnik klikne na gumb "Končaj"
+5. Aplikacija preneha z aktivnim beleženjem trenutne lokacije in uporabniku prikaže povzetek beležene ture
+6. Uporabnik lahko nato turo shrani s klikom na gumb "Shrani" ali pa zavrže s klikom na gumb "Zavrzi"
+
+
+#### Pregledovanje shranjenih tur
+
+Povzetek funkcionalnosti: 
+
+Registriran uporabnik lahko pregleduje svoje shranjene ture na strani "Moje ture"
+
+Osnovni tok:
+
+1. Uporabnik v aplikaciji izbere razdelek "Moje ture"
+2. Aplikacija prikaže seznam uporabnikovih shranjenih tur
+3. Uporabnik pregleduje ture
+
+
+#### Ogled podrobnosti shranjenih tur
+
+Povzetek funkcionalnosti:
+
+Registriran uporabnik si lahko ogleda podrobnosti posameznih shranjenih tur, kot na primer analitika (dolžina ture, povprečna hitrost, opravljena višinska razlika,...), opis ture, težavnost, priporočila ter izrisana pot na zemljevidu.
+
+Osnovni tok:
+
+1. Uporabnik na razdelku "Moje ture" pregleduje svoje shranjene ture
+2. Uporabnik klikne na eno izmed shranjenih tur na seznamu
+3. Aplikacija prikaže podrobnosti izbrane ture na novi zaslonski maski (Podrobnosti ture)
+   
+
+#### Pregledovanje deljenih tur drugih uporabnikov
+
+Povzetek funkcionalnosti:
+
+Registriran uporabnik lahko pregleduje deljene ture drugih uporabnikov na strani "Raziskuj". (Prikaz je enak tistemu na razdelku "Moje ture")
+
+Osnovni tok:
+
+1. Uporabnik v aplikaciji izbere razdelek "Raziskuj"
+2. Prikaže se seznam deljenih tur drugih uporabnikov
+3. Uporabnik pregleduje deljene ture
 
 
