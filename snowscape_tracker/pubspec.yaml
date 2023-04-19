@@ -14,7 +14,17 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
-
+  flutter_background_geolocation: ^4.8.1
+  background_fetch: ^1.1.5
+  mapbox_gl:
+    git:
+      url: https://github.com/flutter-mapbox-gl/maps
+      branch: master
+  cloud_firestore: ^4.5.0
+  firebase_core: ^2.9.0
+  latlng: ^0.2.1
+  latlong2: ^0.8.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
