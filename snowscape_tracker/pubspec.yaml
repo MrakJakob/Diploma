@@ -20,8 +20,10 @@ dependencies:
     git:
       url: https://github.com/flutter-mapbox-gl/maps
       branch: master
+  # Firebase
   cloud_firestore: ^4.5.0
   firebase_core: ^2.9.0
+  firebase_auth: ^4.4.2
   latlng: ^0.2.1
   latlong2: ^0.8.1
   
