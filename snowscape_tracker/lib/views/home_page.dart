@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // import 'package:snowscape_tracker/app/modules/home/view/home_controller.dart';
 import 'package:snowscape_tracker/commands/increment_counter_command.dart';
+import 'package:snowscape_tracker/commands/logout_command.dart';
 import 'package:snowscape_tracker/models/home_model.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +10,10 @@ class HomePage extends StatelessWidget {
 
   void _handleIncrementCounter() {
     IncrementCounterCommand().execute();
+  }
+
+  void _handleLogout() {
+    LogoutCommand().execute();
   }
 
   @override
@@ -30,6 +35,16 @@ class HomePage extends StatelessWidget {
               '$counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            ElevatedButton(
+              onPressed: () => _handleLogout(),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      Color.fromARGB(255, 151, 255, 255)),
+                  padding: MaterialStateProperty.all(const EdgeInsets.symmetric(
+                      horizontal: 100, vertical: 20))),
+              child: const Text("Logout",
+                  style: TextStyle(fontSize: 20, color: Colors.black)),
+            )
           ],
         ),
       ),

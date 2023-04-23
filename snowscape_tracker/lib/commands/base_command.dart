@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:snowscape_tracker/models/app_model.dart';
 import 'package:snowscape_tracker/models/home_model.dart';
+import 'package:snowscape_tracker/services/user_service.dart';
 
 late BuildContext _mainContext;
 
@@ -11,4 +13,8 @@ void init(BuildContext context) => _mainContext = context;
 class BaseCommand {
   // Models
   HomeModel homeModel = _mainContext.read<HomeModel>();
+  AppModel appModel = _mainContext.read<AppModel>();
+
+  // Services
+  UserService userService = _mainContext.read<UserService>();
 }
