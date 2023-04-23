@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/models/app_model.dart';
 import 'package:snowscape_tracker/services/user_service.dart';
+import 'package:snowscape_tracker/theme/custom_theme.dart';
 import 'package:snowscape_tracker/utils/snack_bar.dart';
 import 'package:snowscape_tracker/views/auth_page.dart';
 import 'package:snowscape_tracker/views/home_page.dart';
@@ -34,9 +36,7 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               title: 'Snowscape Tracker',
               scaffoldMessengerKey: SnackBarWidget.messengerKey,
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-              ),
+              theme: CustomTheme.lightTheme,
               home: MainPage(),
             );
           },

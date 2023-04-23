@@ -54,19 +54,12 @@ class _SignupPageState extends State<SignupPage> {
             child: Container(
               alignment: Alignment.centerLeft,
               // height: MediaQuery.of(context).size.height * 0.4,
-              decoration:
-                  BoxDecoration(color: Color.fromARGB(255, 68, 116, 116)),
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Title(
-                  color: Colors.black,
-                  child: const Text(
-                    "Create an Account",
-                    style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
+                child: Text(
+                  "Create an Account",
+                  style: Theme.of(context).textTheme.displayLarge,
                 ),
               ),
             ),
@@ -83,8 +76,9 @@ class _SignupPageState extends State<SignupPage> {
                     if (_isLoading) const CircularProgressIndicator(),
                     TextFormField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: "Email",
+                        hintStyle: Theme.of(context).textTheme.labelMedium,
                         border: OutlineInputBorder(),
                       ),
                       textInputAction: TextInputAction.next,
@@ -97,10 +91,9 @@ class _SignupPageState extends State<SignupPage> {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: "Password",
-                        hintStyle:
-                            TextStyle(color: Color.fromARGB(83, 0, 0, 0)),
+                        hintStyle: Theme.of(context).textTheme.labelMedium,
                         border: OutlineInputBorder(),
                       ),
                       textInputAction: TextInputAction.done,
@@ -118,30 +111,33 @@ class _SignupPageState extends State<SignupPage> {
                         onPressed: () => _handleSignUp(formKey),
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
-                                Color.fromARGB(255, 68, 116, 116)),
+                                Theme.of(context).primaryColor),
                             padding: MaterialStateProperty.all(
                                 const EdgeInsets.symmetric(
                                     horizontal: 100, vertical: 20))),
-                        child: const Text("Sign Up",
-                            style:
-                                TextStyle(fontSize: 20, color: Colors.white)),
+                        child: Text("Sign Up",
+                            style: Theme.of(context).textTheme.labelLarge),
                       ),
                     ),
                     const SizedBox(height: 20),
                     RichText(
                       text: TextSpan(
                         children: [
-                          const TextSpan(
+                          TextSpan(
                               text: "Already have an account? ",
-                              style: TextStyle(color: Colors.black)),
+                              style: Theme.of(context).textTheme.bodyMedium),
                           TextSpan(
                             recognizer: TapGestureRecognizer()
                               ..onTap = () => _switchToLogin(),
                             text: "Sign In",
-                            style: const TextStyle(
-                                color: Color.fromARGB(255, 68, 116, 116),
-                                decoration: TextDecoration.underline),
-                          )
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                          ),
                         ],
                       ),
                     )
