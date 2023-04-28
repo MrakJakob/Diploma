@@ -36,7 +36,8 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             flex: 4,
             child: Container(
               alignment: Alignment.centerLeft,
@@ -51,70 +52,76 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             flex: 6,
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // if (_isLoading) const CircularProgressIndicator(),  // TODO: figure out how to show this without breaking the layout
-                  TextField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      hintText: "Email",
-                      hintStyle: Theme.of(context).textTheme.labelMedium,
-                      border: OutlineInputBorder(),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // if (_isLoading) const CircularProgressIndicator(),  // TODO: figure out how to show this without breaking the layout
+                    TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        hintText: "Email",
+                        hintStyle: Theme.of(context).textTheme.labelMedium,
+                        border: const OutlineInputBorder(),
+                      ),
+                      textInputAction: TextInputAction.next,
                     ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      hintText: "Password",
-                      hintStyle: Theme.of(context).textTheme.labelMedium,
-                      border: OutlineInputBorder(),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        hintText: "Password",
+                        hintStyle: Theme.of(context).textTheme.labelMedium,
+                        border: const OutlineInputBorder(),
+                      ),
+                      textInputAction: TextInputAction.done,
+                      obscureText: true,
                     ),
-                    textInputAction: TextInputAction.done,
-                    obscureText: true,
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => _handleLogin(),
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).primaryColor),
-                          padding: MaterialStateProperty.all(
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => _handleLogin(),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Theme.of(context).primaryColor),
+                            padding: MaterialStateProperty.all(
                               const EdgeInsets.symmetric(
-                                  horizontal: 100, vertical: 20))),
-                      child: Text("Sign In",
-                          style: Theme.of(context).textTheme.labelLarge),
+                                  horizontal: 20, vertical: 20),
+                            )),
+                        child: Text("Sign In",
+                            style: Theme.of(context).textTheme.labelLarge),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                            text: "Don't have an account? ",
-                            style: Theme.of(context).textTheme.bodyMedium),
-                        TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = _switchToSignup,
-                          text: "Sign Up",
-                          style:
-                              Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
+                    const SizedBox(height: 20),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: "Don't have an account? ",
+                              style: Theme.of(context).textTheme.bodyMedium),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = _switchToSignup,
+                            text: "Sign Up",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color: Theme.of(context).primaryColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

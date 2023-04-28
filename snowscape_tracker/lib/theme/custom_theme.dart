@@ -16,7 +16,7 @@ class CustomTheme {
       // Define the default TextTheme.
       textTheme: const TextTheme(
         displayLarge: TextStyle(
-          fontSize: 48.0,
+          fontSize: 38.0,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
@@ -28,7 +28,7 @@ class CustomTheme {
           fontSize: 14.0,
         ),
         labelLarge: TextStyle(
-          fontSize: 20.0,
+          fontSize: 16.0,
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),
