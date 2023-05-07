@@ -6,7 +6,7 @@ class CustomTheme {
     return ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.light,
-      primaryColor: Color.fromARGB(
+      primaryColor: const Color.fromARGB(
           255, 64, 112, 118), // Color.fromARGB(255, 68, 116, 116),
       scaffoldBackgroundColor: Colors.white,
 
@@ -16,7 +16,7 @@ class CustomTheme {
       // Define the default TextTheme.
       textTheme: const TextTheme(
         displayLarge: TextStyle(
-          fontSize: 38.0,
+          fontSize: 48.0,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
@@ -24,11 +24,20 @@ class CustomTheme {
           fontSize: 36.0,
           fontWeight: FontWeight.bold,
         ),
+        titleMedium: TextStyle(
+          fontSize: 24.0,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16.0,
+        ),
         bodyMedium: TextStyle(
           fontSize: 14.0,
         ),
+        bodySmall: TextStyle(
+          fontSize: 12.0,
+        ),
         labelLarge: TextStyle(
-          fontSize: 16.0,
+          fontSize: 20.0,
           color: Colors.white,
           fontWeight: FontWeight.bold,
         ),

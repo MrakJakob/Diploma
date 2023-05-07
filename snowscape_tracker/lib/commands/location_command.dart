@@ -4,4 +4,8 @@ class LocationCommand extends BaseCommand {
   void getCurrentLocation() {
     locationService.setCurrentLocation();
   }
+
+  void changeTrackingPace() {
+    locationService.changePace();
+  }
 }
