@@ -187,38 +187,6 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               child: const Icon(Icons.my_location_rounded),
             )
           : null,
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.map),
-                onPressed: () {},
-                iconSize: 38,
-                color: Colors.white,
-              ),
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {},
-                iconSize: 38,
-                color: Colors.white,
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.person,
-                ),
-                onPressed: () {},
-                iconSize: 38,
-                color: Colors.white,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
