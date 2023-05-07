@@ -34,9 +34,16 @@ class UserService {
 
   Future<bool> signup(String email, String password) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
         email: email,
         password: password,
+      )
+          .then(
+        (value) {
+          // we store user uid in shared preferences
+          UserPreferences.setUserUid(value.user?.uid);
+        },
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
