@@ -37,6 +37,12 @@ class MapCommand extends BaseCommand {
     );
   }
 
+  void clearMap() async {
+    if (mapModel.mapController == null) return;
+
+    await mapModel.mapController!.clearLines();
+  }
+
   void showRecordingContainer() {
     mapModel.recordingContainerVisible = true;
   }

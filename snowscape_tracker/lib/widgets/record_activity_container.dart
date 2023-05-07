@@ -5,8 +5,10 @@ import 'package:snowscape_tracker/commands/location_command.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
+import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
+import 'package:snowscape_tracker/views/save_recorded_activity_page.dart';
 
 class RecordActivityContainer extends StatefulWidget {
   const RecordActivityContainer({super.key});
@@ -18,31 +20,42 @@ class RecordActivityContainer extends StatefulWidget {
 
 class _RecordActivityContainerState extends State<RecordActivityContainer> {
   Timer? timer;
-  int elapsedTimeInSeconds = 0;
 
   @override
   void initState() {
     super.initState();
-
+    var recordingStatus = UserPreferences.getRecordingStatus();
     // we need to check if the user is recording an activity and if so, we need to calculate the elapsed time and start the timer to update the duration in UI
-    if (RecordActivityCommand().recordActivityModel.isRecording) {
-      UserPreferences.getActivityStartTime().then((startTime) {
-        // debugPrint("start time: $startTime");
-        var elapsedTimeSeconds = DateTime.now().difference(startTime).inSeconds;
+    if (recordingStatus != RecordingStatus.idle) {
+      // UserPreferences.getActivityElapsedTime().then((elapsedTimeSeconds) {
+      //   // var elapsedTimeSeconds = DateTime.now().difference(startTime).inSeconds;
 
-        RecordActivityCommand().setActivityDuration(elapsedTimeSeconds.toInt());
+      //   RecordActivityCommand().setActivityDuration(elapsedTimeSeconds);
 
-        timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-          RecordActivityCommand().incrementActivityDuration();
-        });
+      //   if (recordingStatus == RecordingStatus.recording) {
+      //     // we need to start the timer to update the duration in UI
+      //     timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      //       RecordActivityCommand().incrementActivityDuration();
+      //     });
+      //   }
+      // });
+    }
+
+    if (recordingStatus == RecordingStatus.recording) {
+      // we need to start the timer to update the duration in UI
+      timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+        RecordActivityCommand().incrementActivityDuration();
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isRecording =
-        context.select<RecordActivityModel, bool>((model) => model.isRecording);
+    // bool isRecording =
+    //     context.select<RecordActivityModel, bool>((model) => model.isRecording);
+    RecordingStatus recordingStatus =
+        context.select<RecordActivityModel, RecordingStatus>(
+            (model) => model.getRecordingStatus);
 
     double distance = context.select<RecordActivityModel, double>(
       (model) => model.distance,
@@ -79,6 +92,53 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
       MapCommand().hideRecordingContainer();
       UserPreferences
           .clearSharedPrefs(); // TODO: change when we have a better solution for storing the recorded activities
+    }
+
+    void resumeRecording() {
+      RecordActivityCommand().resumeRecording();
+      LocationCommand().changeTrackingPace();
+      timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+        RecordActivityCommand().incrementActivityDuration();
+      });
+    }
+
+    void finishRecording() {
+      // open screen to save the activity
+
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => SaveRecordedActivityPage()),
+      );
+      // RecordActivityCommand().finishRecording();
+      // UserPreferences.clearSharedPrefs();
+    }
+
+    void handleRecordingClick() {
+      switch (recordingStatus) {
+        case RecordingStatus.idle:
+          startRecording();
+          break;
+        case RecordingStatus.recording:
+          stopRecording();
+          break;
+        case RecordingStatus.paused:
+          finishRecording();
+          break;
+        default:
+          break;
+      }
+    }
+
+    void handleResumeCancelClick() {
+      switch (recordingStatus) {
+        case RecordingStatus.idle:
+          cancelRecordSession();
+          break;
+        case RecordingStatus.paused:
+          resumeRecording();
+          break;
+        default:
+          break;
+      }
     }
 
     String printDuration(Duration duration) {
@@ -213,38 +273,42 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
               children: [
                 Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        !isRecording
-                            ? {cancelRecordSession()}
-                            : null; // if we are not recording, we can hide the recording container when user clicks on cancel
-                      },
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).primaryColor,
-                            width: 2,
-                          ),
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Cancel",
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                        ),
-                      ),
-                    )),
+                    child: recordingStatus != RecordingStatus.recording
+                        ? GestureDetector(
+                            onTap: () {
+                              handleResumeCancelClick();
+                            },
+                            child: Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Theme.of(context).primaryColor,
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                recordingStatus == RecordingStatus.idle
+                                    ? "Cancel"
+                                    : "Resume",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                              ),
+                            ),
+                          )
+                        : Container()),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: GestureDetector(
                     onTap: () {
-                      !isRecording ? startRecording() : stopRecording();
+                      handleRecordingClick();
                     },
                     child: Container(
                       width: 70,
@@ -255,7 +319,11 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        !isRecording ? "Start" : "Stop",
+                        recordingStatus == RecordingStatus.idle
+                            ? "Start"
+                            : recordingStatus == RecordingStatus.recording
+                                ? "Stop"
+                                : "Finish",
                         style:
                             Theme.of(context).textTheme.labelMedium?.copyWith(
                                   fontWeight: FontWeight.bold,

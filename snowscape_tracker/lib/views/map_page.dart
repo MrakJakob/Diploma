@@ -7,6 +7,7 @@ import 'package:flutter_background_geolocation/flutter_background_geolocation.da
     as bg;
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/data/RecordActivity.dart';
+import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
@@ -31,9 +32,10 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     // we need to check if the user has already started recording an activity before
-    var isRecording = UserPreferences.getRecording();
+    // var isRecording = UserPreferences.getRecording();
+
     // if the user has started recording an activity before, we need to load the recorded path
-    if (isRecording) {
+    if (UserPreferences.getRecordingStatus() != RecordingStatus.idle) {
       RecordActivityCommand()
           .recoverRecordedActivityFromSharedPreferences()
           .then((path) {
@@ -74,9 +76,14 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
     if (isBackground) {
       // if the app is going to background
-      final isRecording = UserPreferences.getRecording();
+      // final isRecording = UserPreferences.getRecording();
+      final isRecording =
+          UserPreferences.getRecordingStatus() != RecordingStatus.idle;
 
       if (isRecording) {
+        // save the elapsed time to shared preferences
+        await RecordActivityCommand().saveElapsedTimeToSharedPreferences();
+
         var oldpath = RecordActivityCommand().recordActivityModel.points;
         debugPrint("path before app went to background: $oldpath");
         // if we are recording an activity, we want to save the recorded path to user preferences
@@ -94,8 +101,13 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       (mapModel) => mapModel.recordingContainerVisible,
     );
 
-    var isRecording = context.select<RecordActivityModel, bool>(
-      (recordActivityModel) => recordActivityModel.isRecording,
+    // var isRecording = context.select<RecordActivityModel, bool>(
+    //   (recordActivityModel) => recordActivityModel.isRecording,
+    // );
+
+    RecordingStatus recordingStatus =
+        context.select<RecordActivityModel, RecordingStatus>(
+      (recordActivityModel) => recordActivityModel.getRecordingStatus,
     );
 
     var recordedActivity =
@@ -111,7 +123,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       // debugPrint('Location update received');
       MapCommand().updateCameraPosition(currentLocation);
 
-      if (isRecording && recordedActivity != null && points != null) {
+      if (recordingStatus == RecordingStatus.recording &&
+          recordedActivity != null &&
+          points != null) {
         // update RecordedActivity's array of points only if the user is recording an activity and recordedActivity is initialized
         RecordActivityCommand().addPointToRecordedActivity(currentLocation!);
 

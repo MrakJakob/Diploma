@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snowscape_tracker/commands/logout_command.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 
 class CustomAppBar extends StatelessWidget {
@@ -36,7 +37,11 @@ class CustomAppBar extends StatelessWidget {
               color: Colors.white,
             ),
             iconSize: 38,
-            onPressed: () {},
+            onPressed: () {
+              // TODO: implement notifications
+              // this is temporary
+              LogoutCommand().execute();
+            },
           ),
         ],
       ),

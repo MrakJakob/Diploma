@@ -6,6 +6,7 @@ import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/services/location_service.dart';
+import 'package:snowscape_tracker/services/record_activity_service.dart';
 import 'package:snowscape_tracker/services/user_service.dart';
 
 late BuildContext _mainContext;
@@ -26,4 +27,6 @@ class BaseCommand {
   // Services
   UserService userService = _mainContext.read<UserService>();
   LocationService locationService = _mainContext.read<LocationService>();
+  RecordActivityService recordedActivityService =
+      _mainContext.read<RecordActivityService>();
 }

@@ -1,27 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:snowscape_tracker/data/recording_status.dart';
 
 class UserPreferences {
   static SharedPreferences? _preferences;
 
-  static const String _isRecording = 'isRecording';
+  // static const String _isRecording = 'isRecording';
+  static const String _userUid = 'userUid';
+  static const String _recordingStatus = 'recordingStatus';
   static const String _pathLongitudeCoordinates = 'pathLongitudeCoordinates';
   static const String _pathLatitudeCoordinates = 'pathLatitudeCoordinates';
   static const String _activityStartTime = 'activityStartTime';
+  static const String _activityElapsedTimeInSeconds =
+      'activityElapsedTimeInSeconds';
+  static const String _backgroundTimestampMiliseconds =
+      'backgroundTimestampMiliseconds';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
 
-  static Future setRecording(bool isRecording) async {
+  static Future setUserUid(String? userUid) async {
     if (_preferences == null) {
       // if the preferences haven't been initialized yet, we need to initialize them
       await init();
     }
-    await _preferences!.setBool(_isRecording, isRecording);
+    await _preferences!.setString(_userUid, userUid ?? '');
   }
 
-  static bool getRecording() => _preferences!.getBool(_isRecording) ?? false;
+  static String getUserUid() => _preferences!.getString(_userUid) ?? '';
+
+  static Future setRecording(RecordingStatus recordingStatus) async {
+    if (_preferences == null) {
+      // if the preferences haven't been initialized yet, we need to initialize them
+      await init();
+    }
+    await _preferences!
+        .setString(_recordingStatus, recordingStatus.recordingStatus);
+    // await _preferences!.setBool(_isRecording, isRecording);
+  }
+
+  // static bool getRecording() => _preferences!.getBool(_isRecording) ?? false;
+  static RecordingStatus getRecordingStatus() {
+    if (_preferences == null) {
+      // if the preferences haven't been initialized yet, we need to initialize them
+      init();
+    }
+    var recordingStatus = _preferences!.getString(_recordingStatus);
+    switch (recordingStatus) {
+      case 'idle':
+        return RecordingStatus.idle;
+      case 'recording':
+        return RecordingStatus.recording;
+      case 'paused':
+        return RecordingStatus.paused;
+      default:
+        return RecordingStatus.idle;
+    }
+  }
 
   // We have to set the path coordinates as a list of seperate strings (longitude, latitude) because shared preferences doesn't support lists of objects
   static Future _setPathLongitudeCoordinates(
@@ -119,6 +155,29 @@ class UserPreferences {
   static Future<DateTime> getActivityStartTime() async =>
       DateTime.fromMillisecondsSinceEpoch(
           _preferences!.getInt(_activityStartTime) ?? 0);
+
+  static setActivityElapsedTime(int elapsedTimeInSeconds) async {
+    if (_preferences == null) {
+      // if the preferences haven't been initialized yet, we need to initialize them
+      init();
+    }
+    return await _preferences!
+        .setInt(_activityElapsedTimeInSeconds, elapsedTimeInSeconds);
+  }
+
+  static Future<int> getActivityElapsedTime() async =>
+      _preferences!.getInt(_activityElapsedTimeInSeconds) ?? 0;
+
+  static backgroundTimestamp(int value) {
+    if (_preferences == null) {
+      // if the preferences haven't been initialized yet, we need to initialize them
+      init();
+    }
+    return _preferences!.setInt(_backgroundTimestampMiliseconds, value);
+  }
+
+  static Future<int> getBackgroundTimestamp() async =>
+      _preferences!.getInt(_backgroundTimestampMiliseconds) ?? 0;
 
   static Future clearSharedPrefs() async {
     if (_preferences == null) {

@@ -3,6 +3,7 @@ import 'package:flutter_background_geolocation/flutter_background_geolocation.da
     as bg;
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
+import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class LocationService extends BaseCommand {
@@ -11,7 +12,7 @@ class LocationService extends BaseCommand {
     bg.BackgroundGeolocation.onLocation((bg.Location location) {
       debugPrint('[location] - $location');
       locationModel.currentLocation = location;
-      if (UserPreferences.getRecording()) {
+      if (UserPreferences.getRecordingStatus() == RecordingStatus.recording) {
         // Save the point to shared preferences in case the app is closed
         UserPreferences.addPathCoordinate(
             LatLng(location.coords.latitude, location.coords.longitude));
@@ -66,6 +67,7 @@ class LocationService extends BaseCommand {
   }
 
   void changePace() {
-    bg.BackgroundGeolocation.changePace(recordActivityModel.isRecording);
+    bg.BackgroundGeolocation.changePace(
+        recordActivityModel.getRecordingStatus == RecordingStatus.recording);
   }
 }

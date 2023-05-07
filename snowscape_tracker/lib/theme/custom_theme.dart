@@ -24,6 +24,12 @@ class CustomTheme {
           fontSize: 36.0,
           fontWeight: FontWeight.bold,
         ),
+        titleMedium: TextStyle(
+          fontSize: 24.0,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16.0,
+        ),
         bodyMedium: TextStyle(
           fontSize: 14.0,
         ),

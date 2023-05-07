@@ -1,13 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:snowscape_tracker/utils/snack_bar.dart';
+import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class UserService {
   Future<bool> login(String email, String password) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      FirebaseAuth.instance
+          .signInWithEmailAndPassword(
         email: email,
         password: password,
+      )
+          .then(
+        (value) {
+          // we store user uid in shared preferences
+          UserPreferences.setUserUid(value.user?.uid);
+        },
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

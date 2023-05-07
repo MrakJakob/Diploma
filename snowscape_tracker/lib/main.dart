@@ -9,6 +9,7 @@ import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/services/location_service.dart';
+import 'package:snowscape_tracker/services/record_activity_service.dart';
 import 'package:snowscape_tracker/services/user_service.dart';
 import 'package:snowscape_tracker/theme/custom_theme.dart';
 import 'package:snowscape_tracker/utils/snack_bar.dart';
@@ -57,8 +58,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => MapModel()),
           ChangeNotifierProvider(create: (_) => LocationModel()),
           ChangeNotifierProvider(create: (_) => RecordActivityModel()),
-          Provider(create: (c) => UserService()),
-          Provider(create: (context) => LocationService())
+          Provider(create: (_) => UserService()),
+          Provider(create: (_) => LocationService()),
+          Provider(create: (_) => RecordActivityService())
         ],
         child: Builder(
           builder: (context) {

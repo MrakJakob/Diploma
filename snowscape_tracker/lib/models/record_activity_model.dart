@@ -1,17 +1,31 @@
 import "package:flutter/material.dart";
 import "package:mapbox_gl/mapbox_gl.dart";
 import "package:snowscape_tracker/data/RecordActivity.dart";
+import "package:snowscape_tracker/data/recording_status.dart";
 
 class RecordActivityModel extends ChangeNotifier {
-  bool _isRecording = false;
+  // bool _isRecording = false;
+  RecordingStatus _recordingStatus = RecordingStatus.idle;
   RecordedActivity? _recordedActivity;
 
-  set isRecording(bool status) {
-    _isRecording = status;
+  // TODO: maybe we need to move these controllers to the view
+  final TextEditingController _tourNameController = TextEditingController();
+  final TextEditingController _tourDescriptionController =
+      TextEditingController();
+
+  // set isRecording(bool status) {
+  //   _isRecording = status;
+  //   notifyListeners();
+  // }
+
+  // bool get isRecording => _isRecording;
+
+  set recordingStatus(RecordingStatus status) {
+    _recordingStatus = status;
     notifyListeners();
   }
 
-  bool get isRecording => _isRecording;
+  get getRecordingStatus => _recordingStatus;
 
   void createRecordedActivity() {
     _recordedActivity = RecordedActivity(startTime: DateTime.now());
@@ -83,4 +97,25 @@ class RecordActivityModel extends ChangeNotifier {
   }
 
   get getDuration => _recordedActivity?.duration ?? 0;
+
+  get tourNameController => _tourNameController;
+
+  get tourDescriptionController => _tourDescriptionController;
+
+  get getDifficulty => recordedActivity?.difficulty ?? 0;
+
+  set difficulty(int difficulty) {
+    recordedActivity?.difficulty = difficulty;
+    notifyListeners();
+  }
+
+  set description(String description) {
+    recordedActivity?.tourDescription = description;
+    notifyListeners();
+  }
+
+  set tourName(String name) {
+    recordedActivity?.tourName = name;
+    notifyListeners();
+  }
 }
