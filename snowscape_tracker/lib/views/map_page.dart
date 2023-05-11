@@ -6,7 +6,7 @@ import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
-import 'package:snowscape_tracker/data/RecordActivity.dart';
+import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
