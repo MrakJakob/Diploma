@@ -56,6 +56,7 @@ class RecordActivityCommand extends BaseCommand {
       recordActivityModel.recordingStatus = RecordingStatus.idle;
       UserPreferences.setRecording(RecordingStatus.idle);
       mapModel.recordingContainerVisible = false;
+      recordActivityModel.setRecordedActivity = null;
     }
 
     return succes;

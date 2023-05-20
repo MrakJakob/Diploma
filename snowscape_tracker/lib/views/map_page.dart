@@ -6,7 +6,7 @@ import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
-import 'package:snowscape_tracker/data/RecordActivity.dart';
+import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
@@ -187,38 +187,6 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               child: const Icon(Icons.my_location_rounded),
             )
           : null,
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.map),
-                onPressed: () {},
-                iconSize: 38,
-                color: Colors.white,
-              ),
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {},
-                iconSize: 38,
-                color: Colors.white,
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.person,
-                ),
-                onPressed: () {},
-                iconSize: 38,
-                color: Colors.white,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

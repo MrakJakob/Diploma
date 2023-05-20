@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:mapbox_gl/mapbox_gl.dart";
-import "package:snowscape_tracker/data/RecordActivity.dart";
+import 'package:snowscape_tracker/data/recorded_activity.dart';
 import "package:snowscape_tracker/data/recording_status.dart";
 
 class RecordActivityModel extends ChangeNotifier {
@@ -39,6 +39,11 @@ class RecordActivityModel extends ChangeNotifier {
 
   set setPoints(List<LatLng> points) {
     _recordedActivity?.points = points;
+    notifyListeners();
+  }
+
+  set setRecordedActivity(recordedActivity) {
+    _recordedActivity = recordedActivity;
     notifyListeners();
   }
 

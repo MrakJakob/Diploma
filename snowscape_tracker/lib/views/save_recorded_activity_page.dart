@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
+import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class SaveRecordedActivityPage extends StatefulWidget {
   const SaveRecordedActivityPage({Key? key}) : super(key: key);
@@ -21,6 +22,8 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
         if (success) {
           // we clear the map
           MapCommand().clearMap();
+          // and clear the recorded activity from the shared preferences
+          UserPreferences.clearSharedPrefs();
         }
       });
     }

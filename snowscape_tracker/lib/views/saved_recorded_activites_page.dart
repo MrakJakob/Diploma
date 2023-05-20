@@ -1,0 +1,130 @@
+import 'package:flutter/material.dart';
+import 'package:snowscape_tracker/commands/profile_command.dart';
+import 'package:snowscape_tracker/constants/format_date.dart';
+
+class SavedRecordedActivitiesPage extends StatelessWidget {
+  const SavedRecordedActivitiesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: ProfileCommand().readRecordedSessions(),
+      builder: (context, recordedActivity) {
+        if (recordedActivity.hasError) {
+          return Text(recordedActivity.error.toString());
+        } else if (recordedActivity.hasData) {
+          debugPrint("recorded activity:${recordedActivity.data}");
+          return ListView.builder(
+            itemCount: recordedActivity.data!.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 0,
+                        blurRadius: 3,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          // image in background with text on top
+                          SizedBox(
+                            height: 180,
+                            width: double.infinity,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(4),
+                                topRight: Radius.circular(4),
+                              ),
+                              child: Image.network(
+                                // recordedActivity.data![index].imageUrl,
+                                "https://hvitserk.norrona.com/en/assets/image-cache/image-cache/drive/1dyojQW4YxvGi7eCYp2Hqgl-Yqz1FLpaZ.f7ed8c7a.774d88c4.jpg",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          // text on top of image
+                          Positioned(
+                            top: 15,
+                            left: 15,
+                            child: Container(
+                              width: 300,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    FormatDate().f.format(recordedActivity
+                                        .data![index].startTime),
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    recordedActivity.data![index].tourName,
+                                    style: const TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    softWrap: true,
+                                    overflow: TextOverflow.fade,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // text below image
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(4),
+                            bottomRight: Radius.circular(4),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: const [
+                                  Icon(Icons.person),
+                                  SizedBox(width: 6),
+                                  Text(
+                                    "Jakob Mrak",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+}
