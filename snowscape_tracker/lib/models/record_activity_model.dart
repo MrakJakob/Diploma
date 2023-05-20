@@ -42,6 +42,11 @@ class RecordActivityModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  set setRecordedActivity(recordedActivity) {
+    _recordedActivity = recordedActivity;
+    notifyListeners();
+  }
+
   set addPoint(LatLng point) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // addPostFrameCallback is used to avoid the error "setState() or markNeedsBuild() called during build"
