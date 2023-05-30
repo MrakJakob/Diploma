@@ -7,9 +7,11 @@ import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/models/app_model.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
+import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/models/profile_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/services/location_service.dart';
+import 'package:snowscape_tracker/services/mapbox_service.dart';
 import 'package:snowscape_tracker/services/record_activity_service.dart';
 import 'package:snowscape_tracker/services/user_service.dart';
 import 'package:snowscape_tracker/theme/custom_theme.dart';
@@ -17,7 +19,7 @@ import 'package:snowscape_tracker/utils/snack_bar.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:snowscape_tracker/views/auth_page.dart';
 import 'package:snowscape_tracker/views/main_app_container_page.dart';
-import 'package:snowscape_tracker/views/map_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'commands/base_command.dart' as Commands;
 import 'models/home_model.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
@@ -41,6 +43,7 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await UserPreferences.init();
+  await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 
@@ -61,9 +64,11 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => LocationModel()),
           ChangeNotifierProvider(create: (_) => RecordActivityModel()),
           ChangeNotifierProvider(create: (_) => ProfileModel()),
+          ChangeNotifierProvider(create: (_) => PlannedTourModel()),
           Provider(create: (_) => UserService()),
           Provider(create: (_) => LocationService()),
-          Provider(create: (_) => RecordActivityService())
+          Provider(create: (_) => RecordActivityService()),
+          Provider(create: (_) => MapboxService()),
         ],
         child: Builder(
           builder: (context) {

@@ -46,6 +46,7 @@ class RecordActivityService {
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => RecordedActivity.fromSnapshot(doc))
-            .toList());
+            .toList())
+        .handleError((e) => debugPrint(e.toString()));
   }
 }

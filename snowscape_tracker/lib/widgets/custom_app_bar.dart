@@ -9,6 +9,10 @@ class CustomAppBar extends StatelessWidget {
       MapCommand().showRecordingContainer();
     }
 
+    void showTourPlanningContainer() {
+      MapCommand().showTourPlanningContainer();
+    }
+
     return SafeArea(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -19,7 +23,9 @@ class CustomAppBar extends StatelessWidget {
               color: Colors.white,
             ),
             iconSize: 38,
-            onPressed: () {},
+            onPressed: () {
+              showTourPlanningContainer();
+            },
           ),
           IconButton(
             icon: const Icon(

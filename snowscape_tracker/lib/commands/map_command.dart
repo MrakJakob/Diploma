@@ -2,6 +2,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
+import 'package:snowscape_tracker/data/planned_tour.dart';
 
 class MapCommand extends BaseCommand {
   void initiateMap(MapboxMapController controller) {
@@ -25,31 +26,71 @@ class MapCommand extends BaseCommand {
     );
   }
 
-  Future<void> updatePolyline(List<LatLng> points) async {
+  Future<void> updatePolyline(List<LatLng> points, String type) async {
     if (mapModel.mapController == null || points.isEmpty) return;
+
+    var color =
+        type == 'recorded' // TODO: this is temporary, change in the future
+            ? '#86D7FB'
+            : type == 'planned'
+                ? '#FF0000'
+                : '#000000';
 
     await mapModel.mapController!.addLine(
       LineOptions(
         geometry: points,
-        lineColor: '#86D7FB',
+        lineColor: color,
         lineWidth: 4.0,
       ),
     );
   }
 
-  void clearMap() async {
+  Future<void> clearMap() async {
     if (mapModel.mapController == null) return;
 
     await mapModel.mapController!.clearLines();
+    await mapModel.mapController!.clearSymbols();
   }
 
   void showRecordingContainer() {
+    mapModel.tourPlanningContainerVisible = false;
     mapModel.recordingContainerVisible = true;
   }
 
   void hideRecordingContainer() {
     mapModel.recordingContainerVisible = false;
   }
+
+  void showTourPlanningContainer() {
+    mapModel.recordingContainerVisible = false;
+    mapModel.tourPlanningContainerVisible = true;
+  }
+
+  void hideTourPlanningContainer() {
+    mapModel.tourPlanningContainerVisible = false;
+  }
+
+  Future updateMarkers(List<Marker> markers) async {
+    if (mapModel.mapController == null) return;
+
+    markers.forEach((marker) async {
+      await addMarker(marker.point);
+    });
+  }
+
+  Future addMarker(LatLng marker) async {
+    return await mapModel.mapController?.addSymbol(
+      SymbolOptions(
+        geometry: marker,
+        iconImage: 'assets/dot.png',
+        iconSize: 0.02,
+      ),
+    );
+  }
+
+  // void removeLastMarker() {
+  //   mapModel.mapController?.addSource("s", GeoJsonSource(data: null));
+  // }
 
   void resetController() {
     mapModel.mapController = null;

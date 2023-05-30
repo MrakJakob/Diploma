@@ -15,13 +15,13 @@ class SaveRecordedActivityPage extends StatefulWidget {
 class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
   @override
   Widget build(BuildContext context) {
-    void saveTour() {
+    void saveTour() async {
       // we save the tour and then pop the save recorded activity page
-      RecordActivityCommand().saveRecordedActivity().then((success) {
+      RecordActivityCommand().saveRecordedActivity().then((success) async {
         Navigator.of(context).pop();
         if (success) {
           // we clear the map
-          MapCommand().clearMap();
+          await MapCommand().clearMap();
           // and clear the recorded activity from the shared preferences
           UserPreferences.clearSharedPrefs();
         }

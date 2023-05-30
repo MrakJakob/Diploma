@@ -4,9 +4,11 @@ import 'package:snowscape_tracker/models/app_model.dart';
 import 'package:snowscape_tracker/models/home_model.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
+import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/models/profile_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/services/location_service.dart';
+import 'package:snowscape_tracker/services/mapbox_service.dart';
 import 'package:snowscape_tracker/services/record_activity_service.dart';
 import 'package:snowscape_tracker/services/user_service.dart';
 
@@ -25,10 +27,12 @@ class BaseCommand {
   RecordActivityModel recordActivityModel =
       _mainContext.read<RecordActivityModel>();
   ProfileModel profileModel = _mainContext.read<ProfileModel>();
+  PlannedTourModel plannedTourModel = _mainContext.read<PlannedTourModel>();
 
   // Services
   UserService userService = _mainContext.read<UserService>();
   LocationService locationService = _mainContext.read<LocationService>();
   RecordActivityService recordedActivityService =
       _mainContext.read<RecordActivityService>();
+  MapboxService mapBoxService = _mainContext.read<MapboxService>();
 }
