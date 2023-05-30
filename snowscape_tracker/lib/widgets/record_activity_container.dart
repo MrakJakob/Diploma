@@ -6,6 +6,7 @@ import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
+import 'package:snowscape_tracker/helpers/formating.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:snowscape_tracker/views/save_recorded_activity_page.dart';
@@ -141,15 +142,8 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
       }
     }
 
-    String printDuration(Duration duration) {
-      String twoDigits(int n) => n.toString().padLeft(2, "0");
-      String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-      String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-      return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
-    }
-
     return Flexible(
-      flex: 1,
+      flex: 12,
       fit: FlexFit.loose,
       child: Column(
         children: [

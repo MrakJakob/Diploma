@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/location_command.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
+import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
+import 'package:snowscape_tracker/data/planned_tour.dart';
 import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
+import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:snowscape_tracker/widgets/custom_app_bar.dart';
 import 'package:snowscape_tracker/widgets/record_activity_container.dart';
+import 'package:snowscape_tracker/widgets/tour_planning_container.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -68,7 +73,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       if (path.isNotEmpty) {
         debugPrint("path recovered from shared preferences: $path");
         RecordActivityCommand().recordActivityModel.setPoints = path;
-        await MapCommand().updatePolyline(path);
+        await MapCommand().updatePolyline(path, "recorded");
       }
     }
 
@@ -94,12 +99,20 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    var currentLocation = context.select<LocationModel, bg.Location?>(
+    bg.Location? currentLocation = context.select<LocationModel, bg.Location?>(
       (locationModel) => locationModel.currentLocation,
     );
-    var recordingContainerVisible = context.select<MapModel, bool>(
+    bool recordingContainerVisible = context.select<MapModel, bool>(
       (mapModel) => mapModel.recordingContainerVisible,
     );
+
+    bool tourPlanningContainerVisible = context.select<MapModel, bool>(
+      (mapModel) => mapModel.tourPlanningContainerVisible,
+    );
+
+    // bool drawStraightLine = context.select<PlannedTourModel, bool>(
+    //   (model) => model.drawStraightLine,
+    // );
 
     // var isRecording = context.select<RecordActivityModel, bool>(
     //   (recordActivityModel) => recordActivityModel.isRecording,
@@ -110,12 +123,12 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       (recordActivityModel) => recordActivityModel.getRecordingStatus,
     );
 
-    var recordedActivity =
+    RecordedActivity? recordedActivity =
         context.select<RecordActivityModel, RecordedActivity?>(
       (recordActivityModel) => recordActivityModel.recordedActivity,
     );
 
-    var points = context.select<RecordActivityModel, List<LatLng>?>(
+    List<LatLng>? points = context.select<RecordActivityModel, List<LatLng>?>(
       (recordActivityModel) => recordActivityModel.points,
     );
 
@@ -129,7 +142,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         // update RecordedActivity's array of points only if the user is recording an activity and recordedActivity is initialized
         RecordActivityCommand().addPointToRecordedActivity(currentLocation!);
 
-        MapCommand().updatePolyline(points);
+        MapCommand().updatePolyline(points, "recorded");
       }
     }
 
@@ -147,8 +160,33 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       if (recoveredPath &&
           RecordActivityCommand().recordActivityModel.points != null) {
         await MapCommand().updatePolyline(
-            RecordActivityCommand().recordActivityModel.points!);
+            RecordActivityCommand().recordActivityModel.points!, "recorded");
       }
+    }
+
+    void onMapLongClick(point, coordinates) async {
+      if (MapCommand().mapModel.tourPlanningContainerVisible) {
+        // if the tour planning container is visible, we want to add a markers to the map when the user long clicks on the map
+        // MapCommand().addMarker(point);
+
+        // debugPrint("Map long click coordinates: $coordinates");
+        // PlannedTourCommand().addMarker(coordinates);
+        await MapCommand().addMarker(coordinates);
+        if (PlannedTourCommand().isTourPlanning()) {
+          // add coordinate to marker array and draw a line between markers
+          PlannedTourCommand().handleRouteUpdate(coordinates).then((value) {
+            MapCommand()
+                .updatePolyline(PlannedTourCommand().getRoute(), "planned");
+          });
+        } else {
+          // create a new planned tour object and add the first marker
+          PlannedTourCommand().startTourPlanning();
+          Marker marker = Marker(coordinates, 0.0, 0.0);
+          marker.isStartMarker = true;
+          PlannedTourCommand().addMarker(marker);
+        }
+      }
+      // debugPrint("Map long click point: $point");
     }
 
     return Scaffold(
@@ -158,13 +196,17 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       ),
       body: Column(
         children: [
+          // Tour planning container is visible only when the user clicks on the "plan tour" button in the app bar
+          // Map container is always visible on Map page
           Flexible(
-            flex: 1,
+            flex: 12,
             fit: FlexFit.tight,
             child: MapboxMap(
               accessToken:
-                  'pk.eyJ1IjoibXJha2pha29iIiwiYSI6ImNsZm1vbjRoZzBkeDkzeW5yOWI0bHd0a2sifQ.roqcNX8j4FccFV5GBB8LJg',
+                  dotenv.env['MAPBOX_ACCESS_TOKEN'] ?? "MAPBOX_ACCESS_TOKEN",
               onMapCreated: onMapCreated,
+              onMapLongClick: (point, coordinates) =>
+                  onMapLongClick(point, coordinates),
               initialCameraPosition: const CameraPosition(
                 target: LatLng(46.0569, 14.5058),
                 zoom: 10.0,
@@ -173,20 +215,26 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               myLocationEnabled: true,
             ),
           ),
+          // Tour planning container is visible only when the user clicks on the "plan tour" button in the app bar
+          tourPlanningContainerVisible
+              ? const TourPlanningContainer()
+              : Container(),
+          // Recording container is shown only if the user clicks on the record button in AppBar
           recordingContainerVisible
               ? const RecordActivityContainer()
               : Container(), // show the recording container only if the user clicks on the record button in AppBar
         ],
       ),
-      floatingActionButton: !recordingContainerVisible
-          ? FloatingActionButton(
-              onPressed: () {
-                handleOnCurrentLocationPressed();
-              },
-              backgroundColor: Theme.of(context).primaryColor,
-              child: const Icon(Icons.my_location_rounded),
-            )
-          : null,
+      floatingActionButton:
+          !recordingContainerVisible && !tourPlanningContainerVisible
+              ? FloatingActionButton(
+                  onPressed: () {
+                    handleOnCurrentLocationPressed();
+                  },
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: const Icon(Icons.my_location_rounded),
+                )
+              : null,
     );
   }
 

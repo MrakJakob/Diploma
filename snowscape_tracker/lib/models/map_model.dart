@@ -4,6 +4,7 @@ import "package:flutter/material.dart";
 class MapModel extends ChangeNotifier {
   MapboxMapController? mapController;
   bool _recordingContainerVisible = false;
+  bool _tourPlanningContainerVisible = false;
 
   void initiateMap(MapboxMapController controller) {
     mapController = controller;
@@ -16,4 +17,11 @@ class MapModel extends ChangeNotifier {
   }
 
   bool get recordingContainerVisible => _recordingContainerVisible;
+
+  set tourPlanningContainerVisible(bool status) {
+    _tourPlanningContainerVisible = status;
+    notifyListeners();
+  }
+
+  bool get tourPlanningContainerVisible => _tourPlanningContainerVisible;
 }
