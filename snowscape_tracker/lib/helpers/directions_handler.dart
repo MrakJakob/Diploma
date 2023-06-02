@@ -16,8 +16,8 @@ Future<MapboxDirectionsResponse> directionsApiResponseModified(
   List<LatLng> route = response['routes'][0]['geometry']['coordinates']
       .map<LatLng>((point) => LatLng(point[1], point[0]))
       .toList();
-  double duration = response['routes'][0]['duration'] as double;
-  double distance = response['routes'][0]['distance'] as double;
+  double duration = response['routes'][0]['duration'].toDouble();
+  double distance = response['routes'][0]['distance'].toDouble();
 
   debugPrint("Modified response: $route");
 

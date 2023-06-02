@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/models/app_model.dart';
@@ -48,7 +47,7 @@ Future main() async {
   runApp(const MyApp());
 
   // Register headlessTask:
-  BackgroundGeolocation.registerHeadlessTask(headlessTask);
+  bg.BackgroundGeolocation.registerHeadlessTask(headlessTask);
 }
 
 class MyApp extends StatelessWidget {
@@ -85,7 +84,25 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void initialization() async {
+    UserPreferences.init();
+    if (UserPreferences.isFirstLoad()) {
+      UserPreferences.setFirstLoad(false);
+      // TODO: here we load the initial data in the local sqlite database
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

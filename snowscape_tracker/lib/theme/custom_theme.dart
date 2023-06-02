@@ -6,8 +6,7 @@ class CustomTheme {
     return ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.light,
-      primaryColor: const Color.fromARGB(
-          255, 64, 112, 118), // Color.fromARGB(255, 68, 116, 116),
+      primaryColor: Color(0xFF407076), // Color.fromARGB(255, 68, 116, 116),
       scaffoldBackgroundColor: Colors.white,
 
       // Define the default font family.

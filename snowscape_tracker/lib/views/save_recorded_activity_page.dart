@@ -23,7 +23,7 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
           // we clear the map
           await MapCommand().clearMap();
           // and clear the recorded activity from the shared preferences
-          UserPreferences.clearSharedPrefs();
+          UserPreferences.clearRecordedActivity();
         }
       });
     }

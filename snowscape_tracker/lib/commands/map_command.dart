@@ -36,7 +36,9 @@ class MapCommand extends BaseCommand {
                 ? '#FF0000'
                 : '#000000';
 
-    await mapModel.mapController!.addLine(
+    if (mapModel.mapController?.lineManager == null ||
+        mapModel.mapController?.addLine == null) return;
+    await mapModel.mapController?.addLine(
       LineOptions(
         geometry: points,
         lineColor: color,

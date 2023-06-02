@@ -16,9 +16,15 @@ class UserPreferences {
       'activityElapsedTimeInSeconds';
   static const String _backgroundTimestampMiliseconds =
       'backgroundTimestampMiliseconds';
+  static const String _isFirstLoad = 'isFirstLoad';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
+
+  static bool isFirstLoad() => _preferences!.getBool(_isFirstLoad) ?? true;
+
+  static Future setFirstLoad(bool isFirstLoad) async =>
+      await _preferences!.setBool(_isFirstLoad, isFirstLoad);
 
   static Future setUserUid(String? userUid) async {
     if (_preferences == null) {
@@ -185,5 +191,25 @@ class UserPreferences {
       await init();
     }
     await _preferences!.clear();
+  }
+
+  static Future clearRecordedActivity() async {
+    if (_preferences == null) {
+      // if the preferences haven't been initialized yet, we need to initialize them
+      await init();
+    }
+    await _preferences!.remove(_pathLatitudeCoordinates);
+    await _preferences!.remove(_pathLongitudeCoordinates);
+    await _preferences!.remove(_activityStartTime);
+    await _preferences!.remove(_activityElapsedTimeInSeconds);
+    await _preferences!.remove(_backgroundTimestampMiliseconds);
+  }
+
+  static Future logout() async {
+    if (_preferences == null) {
+      // if the preferences haven't been initialized yet, we need to initialize them
+      await init();
+    }
+    await _preferences!.remove(_userUid);
   }
 }

@@ -160,7 +160,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       if (recoveredPath &&
           RecordActivityCommand().recordActivityModel.points != null) {
         await MapCommand().updatePolyline(
-            RecordActivityCommand().recordActivityModel.points!, "recorded");
+            RecordActivityCommand().recordActivityModel.points, "recorded");
       }
     }
 

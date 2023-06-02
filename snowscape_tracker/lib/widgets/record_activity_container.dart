@@ -91,8 +91,8 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
 
     void cancelRecordSession() {
       MapCommand().hideRecordingContainer();
-      UserPreferences
-          .clearSharedPrefs(); // TODO: change when we have a better solution for storing the recorded activities
+      // clear the recorded activity from shared prefs
+      UserPreferences.clearRecordedActivity();
     }
 
     void resumeRecording() {
