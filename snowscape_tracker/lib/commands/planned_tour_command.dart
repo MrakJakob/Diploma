@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:snowscape_tracker/data/mapbox_directions_response.dart';
 import 'package:snowscape_tracker/data/planned_tour.dart';
+import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 import 'package:snowscape_tracker/helpers/directions_handler.dart';
+import 'package:snowscape_tracker/helpers/match_rules.dart';
 
 class PlannedTourCommand extends BaseCommand {
   void _createPlannedTour() {
@@ -86,7 +89,9 @@ class PlannedTourCommand extends BaseCommand {
   }
 
   Future<bool> undo() async {
-    if (plannedTourModel.markers.isEmpty) return true;
+    if (plannedTourModel.markers == null || plannedTourModel.markers.isEmpty) {
+      return true;
+    }
 
     // remove the last marker
     plannedTourModel.markers.removeLast();
@@ -143,9 +148,22 @@ class PlannedTourCommand extends BaseCommand {
     plannedTourModel.setDrawStraightLine = status;
   }
 
-  getElevationGain() async {
+  generateRoute() async {
+    plannedTourModel.setLoadingPathData = true;
+    // int totalElevation =
+    //     await arcGISService.getElevationGain(plannedTourModel.route);
     int totalElevation =
-        await mapBoxService.getElevationGain(plannedTourModel.markers);
+        await mapBoxService.getElevationGain(plannedTourModel.route);
     plannedTourModel.setTotalElevationGain = totalElevation;
+    plannedTourModel.setLoadingPathData = false;
+
+    List<MatchedRule> matchedRules =
+        await matchRules(plannedTourModel.contextPoints, "planned_tour");
+
+    debugPrint("matched rules: $matchedRules");
+
+    if (matchedRules.isNotEmpty) {
+      plannedTourModel.setMatchedRules = matchedRules;
+    }
   }
 }

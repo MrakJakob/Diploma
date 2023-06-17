@@ -39,6 +39,10 @@ dependencies:
   flutter_dotenv: ^5.0.2
   dio: ^5.1.2
   flutter_native_splash: ^2.2.1
+  sqflite: ^2.2.8+4
+  path: ^1.8.2
+  xml: ^6.2.2
+  maps_toolkit: ^2.0.1
   
 
 flutter_native_splash:
@@ -64,6 +68,9 @@ flutter:
     - assets/maps-and-flags.png
     - assets/dot.png
     - assets/mountain.png
+    - assets/rules.json
+    - assets/areas.json
+    - assets/warningAlert.png
     - .env
   # To add assets to your application, add an assets section, like this:
   # assets:

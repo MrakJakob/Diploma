@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:path/path.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:snowscape_tracker/data/planned_tour.dart';
+import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 
 class MapCommand extends BaseCommand {
   void initiateMap(MapboxMapController controller) {
@@ -90,9 +93,53 @@ class MapCommand extends BaseCommand {
     );
   }
 
-  // void removeLastMarker() {
-  //   mapModel.mapController?.addSource("s", GeoJsonSource(data: null));
-  // }
+  Future<void> showAlertInfo(Symbol symbol, BuildContext context) async {
+    if (symbol.data == null) return;
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(symbol.data!['name'] ?? ''),
+            content: SingleChildScrollView(
+              child: ListBody(children: <Widget>[
+                Text(symbol.data!['text'] ?? ''),
+              ]),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close'),
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void>? addWarningMarkers(
+      List<MatchedRule> matchedRules, BuildContext context) {
+    if (mapModel.mapController == null) return null;
+
+    matchedRules.forEach((matchedRule) async {
+      await mapModel.mapController?.addSymbol(
+        SymbolOptions(
+          geometry: LatLng(
+            matchedRule.latitude,
+            matchedRule.longitude,
+          ),
+          iconImage: 'assets/warningAlert.png',
+          iconSize: 0.2,
+        ),
+        matchedRule.toMap(),
+      );
+    });
+    mapModel.mapController?.onSymbolTapped.add((symbol) {
+      print('Symbol tapped: ${symbol.id}');
+      showAlertInfo(symbol, context);
+    });
+  }
 
   void resetController() {
     mapModel.mapController = null;

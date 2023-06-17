@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/commands/planned_tour_command.dart';
+import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 import 'package:snowscape_tracker/helpers/formating.dart';
 import 'package:snowscape_tracker/models/planned_tour_model.dart';
 
@@ -26,6 +27,15 @@ class TourPlanningContainer extends StatelessWidget {
       (model) => model.totalElevationGain,
     );
 
+    bool loadingPathData = context.select<PlannedTourModel, bool>(
+      (model) => model.loadingPathData,
+    );
+
+    List<MatchedRule> matchedRules =
+        context.select<PlannedTourModel, List<MatchedRule>>(
+      (model) => model.matchedRules,
+    );
+
     void handleUndo() async {
       bool isEmpty = await PlannedTourCommand().undo();
       if (isEmpty) {
@@ -38,6 +48,14 @@ class TourPlanningContainer extends StatelessWidget {
       await MapCommand().clearMap();
       await MapCommand().updatePolyline(route, "planned");
       await MapCommand().updateMarkers(PlannedTourCommand().getMarkers());
+    }
+
+    void generateRoute() async {
+      await PlannedTourCommand().generateRoute();
+
+      if (matchedRules.isNotEmpty) {
+        await MapCommand().addWarningMarkers(matchedRules, context);
+      }
     }
 
     return Flexible(
@@ -266,14 +284,17 @@ class TourPlanningContainer extends StatelessWidget {
                     flex: 1,
                     fit: FlexFit.tight,
                     child: Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          // save route
-                          PlannedTourCommand().getElevationGain();
-                        },
-                        child: Text("Generate route",
-                            style: Theme.of(context).textTheme.titleSmall),
-                      ),
+                      child: loadingPathData
+                          ? const CircularProgressIndicator()
+                          : GestureDetector(
+                              onTap: () {
+                                // save route
+                                generateRoute();
+                              },
+                              child: Text("Generate route",
+                                  style:
+                                      Theme.of(context).textTheme.titleSmall),
+                            ),
                     ),
                   ),
                 ],

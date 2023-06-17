@@ -213,6 +213,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                 tilt: 0,
               ),
               myLocationEnabled: true,
+              styleString:
+                  "mapbox://styles/mrakjakob/clfmp41bl001x01mtoth3xqxw",
             ),
           ),
           // Tour planning container is visible only when the user clicks on the "plan tour" button in the app bar

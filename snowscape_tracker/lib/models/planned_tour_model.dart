@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/data/planned_tour.dart';
+import 'package:snowscape_tracker/data/rules/matched_rule.dart';
+import '../services/mapbox_service.dart';
 
 class PlannedTourModel extends ChangeNotifier {
   bool _isTourPlanning = false;
   PlannedTour? _plannedTour;
   bool _drawStraightLine = false;
+  bool _loadingPathData = false;
+  List<ContextPoint> _contextPoints = [];
+  List<MatchedRule> _matchedRules = [];
+
+  set setLoadingPathData(bool status) {
+    _loadingPathData = status;
+    notifyListeners();
+  }
+
+  bool get loadingPathData => _loadingPathData;
 
   // we set this to true when the user sets the first marker on the map
   set isTourPlanning(bool status) {
@@ -25,6 +37,20 @@ class PlannedTourModel extends ChangeNotifier {
   }
 
   get plannedTour => _plannedTour;
+
+  get contextPoints => _contextPoints;
+
+  set setContextPoints(List<ContextPoint> contextPoints) {
+    _contextPoints = contextPoints;
+    notifyListeners();
+  }
+
+  get matchedRules => _matchedRules;
+
+  set setMatchedRules(List<MatchedRule> matchedRules) {
+    _matchedRules = matchedRules;
+    notifyListeners();
+  }
 
   set marker(Marker marker) {
     // WidgetsBinding.instance!.addPostFrameCallback((_) {
