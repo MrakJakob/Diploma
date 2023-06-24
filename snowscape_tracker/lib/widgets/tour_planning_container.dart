@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/commands/planned_tour_command.dart';
+import 'package:snowscape_tracker/data/planned_tour.dart';
 import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 import 'package:snowscape_tracker/helpers/formating.dart';
 import 'package:snowscape_tracker/models/planned_tour_model.dart';
+import 'package:snowscape_tracker/views/save_planned_tour.dart';
 
 class TourPlanningContainer extends StatelessWidget {
   const TourPlanningContainer({super.key});
@@ -42,18 +44,26 @@ class TourPlanningContainer extends StatelessWidget {
         await MapCommand().clearMap();
         return;
       }
-      // MapCommand().removeLastMarker();
+
       var route = PlannedTourCommand().getRoute();
-      route.add(PlannedTourCommand().getLastMarker().point);
+      List<Marker>? markers = PlannedTourCommand().getMarkers();
+
       await MapCommand().clearMap();
-      await MapCommand().updatePolyline(route, "planned");
-      await MapCommand().updateMarkers(PlannedTourCommand().getMarkers());
+      if (markers != null) {
+        await MapCommand().updateMarkers(markers);
+      }
+
+      if (route != null) {
+        route.add(PlannedTourCommand().getLastMarker().point);
+
+        await MapCommand().updatePolyline(route, "planned", null);
+      }
     }
 
     void generateRoute() async {
       await PlannedTourCommand().generateRoute();
 
-      if (matchedRules.isNotEmpty) {
+      if (matchedRules != null && matchedRules.isNotEmpty) {
         await MapCommand().addWarningMarkers(matchedRules, context);
       }
     }
@@ -265,8 +275,7 @@ class TourPlanningContainer extends StatelessWidget {
                         onTap: () {
                           // cancel router planning
                           PlannedTourCommand().stopTourPlanning();
-                          MapCommand().clearMap();
-                          MapCommand().hideTourPlanningContainer();
+                          MapCommand().stopTourPlanning();
                         },
                         child: Text("Cancel",
                             style: Theme.of(context).textTheme.titleSmall),
@@ -291,10 +300,34 @@ class TourPlanningContainer extends StatelessWidget {
                                 // save route
                                 generateRoute();
                               },
-                              child: Text("Generate route",
+                              child: Text("Calculate",
                                   style:
                                       Theme.of(context).textTheme.titleSmall),
                             ),
+                    ),
+                  ),
+                  const VerticalDivider(
+                    width: 20,
+                    color: Color.fromARGB(26, 0, 0, 0),
+                    thickness: 1,
+                    indent: 10,
+                    endIndent: 10,
+                  ),
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          // save route
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => const SavePlannedTour()),
+                          );
+                        },
+                        child: Text("Save route",
+                            style: Theme.of(context).textTheme.titleSmall),
+                      ),
                     ),
                   ),
                 ],

@@ -143,7 +143,7 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
     }
 
     return Flexible(
-      flex: 12,
+      flex: 8,
       fit: FlexFit.loose,
       child: Column(
         children: [
@@ -264,66 +264,66 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
             fit: FlexFit.tight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: recordingStatus != RecordingStatus.recording
-                        ? GestureDetector(
-                            onTap: () {
-                              handleResumeCancelClick();
-                            },
-                            child: Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Theme.of(context).primaryColor,
-                                  width: 2,
-                                ),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                recordingStatus == RecordingStatus.idle
-                                    ? "Cancel"
-                                    : "Resume",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                              ),
+                recordingStatus != RecordingStatus.recording
+                    ? GestureDetector(
+                        onTap: () {
+                          handleResumeCancelClick();
+                        },
+                        child: Container(
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 2,
                             ),
-                          )
-                        : Container()),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      handleRecordingClick();
-                    },
-                    child: Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        recordingStatus == RecordingStatus.idle
-                            ? "Start"
-                            : recordingStatus == RecordingStatus.recording
-                                ? "Stop"
-                                : "Finish",
-                        style:
-                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            recordingStatus == RecordingStatus.idle
+                                ? "Cancel"
+                                : "Resume",
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                                  color: Theme.of(context).primaryColor,
                                 ),
-                      ),
+                          ),
+                        ),
+                      )
+                    : Container(),
+                recordingStatus != RecordingStatus.recording
+                    ? const SizedBox(
+                        width: 20,
+                      )
+                    : Container(),
+                GestureDetector(
+                  onTap: () {
+                    handleRecordingClick();
+                  },
+                  child: Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      recordingStatus == RecordingStatus.idle
+                          ? "Start"
+                          : recordingStatus == RecordingStatus.recording
+                              ? "Stop"
+                              : "Finish",
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                     ),
                   ),
                 )

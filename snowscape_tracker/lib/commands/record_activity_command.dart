@@ -25,6 +25,11 @@ class RecordActivityCommand extends BaseCommand {
     await UserPreferences.setRecording(RecordingStatus.paused);
   }
 
+  bool recordingStatus() {
+    return recordActivityModel.getRecordingStatus ==
+        RecordingStatus.recording; // return the recording status
+  }
+
   void resumeRecording() async {
     recordActivityModel.recordingStatus = RecordingStatus.recording;
 
@@ -60,6 +65,14 @@ class RecordActivityCommand extends BaseCommand {
     }
 
     return succes;
+  }
+
+  Future<void> endRecordedActivity() async {
+    await UserPreferences.setRecording(RecordingStatus.idle);
+    recordActivityModel.recordingStatus = RecordingStatus.idle;
+    mapModel.recordingContainerVisible = false;
+    recordActivityModel.setRecordedActivity = null;
+    return;
   }
 
   double calculateDistanceBetweenPoints(lat1, lon1, lat2, lon2) {

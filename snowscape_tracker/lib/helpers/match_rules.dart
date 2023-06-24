@@ -368,34 +368,36 @@ Future<List<MatchedRule>> matchRules(
         DateTime date2 =
             DateTime(2023, 6, 16, problemRule.hourMax ?? 0, 0, 0, 0, 0);
 
-        AvalancheBulletin bulletin = await getAvalancheBulletin(
+        AvalancheBulletin? bulletin = await getAvalancheBulletin(
           database,
         );
 
-        List<ProblemBulletin> problemsForAvalancheArea =
-            await getProblemsForAvalancheArea(
-          bulletin.avBulletinId,
-          areaId,
-          problemRule.problemType,
-          approximateRoute[i],
-          database,
-        );
-        debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
-        for (ProblemBulletin problemBulletin in problemsForAvalancheArea) {
-          debugPrint('problemBulletin: ${problemBulletin}');
-        }
+        if (bulletin != null) {
+          List<ProblemBulletin> problemsForAvalancheArea =
+              await getProblemsForAvalancheArea(
+            bulletin.avBulletinId,
+            areaId,
+            problemRule.problemType,
+            approximateRoute[i],
+            database,
+          );
+          debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
+          for (ProblemBulletin problemBulletin in problemsForAvalancheArea) {
+            debugPrint('problemBulletin: ${problemBulletin}');
+          }
 
-        if (problemsForAvalancheArea.isEmpty) {
-          isMatched = false;
-        } else {
-          debugPrint("problemRule.problemType: ${problemRule.problemType}");
+          if (problemsForAvalancheArea.isEmpty) {
+            isMatched = false;
+          } else {
+            debugPrint("problemRule.problemType: ${problemRule.problemType}");
+          }
         }
       }
 
       if (isMatched) {
         MatchedRule matchedRule = MatchedRule(
           ruleId: rule.rule.ruleId,
-          matchedRuleId: i,
+          id: i.toString(),
           date: DateTime.now(),
           read: false,
           name: rule.rule.notificationName ?? '',
@@ -437,10 +439,12 @@ Future<List<ProblemBulletin>> getProblemsForAvalancheArea(
   return problems;
 }
 
-Future<AvalancheBulletin> getAvalancheBulletin(Database db) async {
+Future<AvalancheBulletin?> getAvalancheBulletin(Database db) async {
   List<Map<String, Object?>> bulletinMaps = await db.query("avalanche_bulletin",
       orderBy: 'avBulletinId ASC', limit: 1);
-
+  if (bulletinMaps.isEmpty) {
+    return null;
+  }
   AvalancheBulletin bulletin = AvalancheBulletin.fromJson(bulletinMaps[0]);
   return bulletin;
 }

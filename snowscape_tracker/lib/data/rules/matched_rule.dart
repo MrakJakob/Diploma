@@ -1,18 +1,20 @@
 class MatchedRule {
   // @PrimaryKey(autoGenerate = true)
-  final int matchedRuleId;
-  final int ruleId;
-  final DateTime date;
-  final bool read;
-  final String name;
-  final String text;
-  final bool hiking;
-  final int areaId;
-  final double latitude;
-  final double longitude;
+  String id;
+  String? plannedTourId;
+  int ruleId;
+  DateTime date;
+  bool read;
+  String name;
+  String text;
+  bool hiking;
+  int areaId;
+  double latitude;
+  double longitude;
 
   MatchedRule({
-    required this.matchedRuleId,
+    required this.id,
+    this.plannedTourId,
     required this.ruleId,
     required this.date,
     required this.read,
@@ -26,9 +28,10 @@ class MatchedRule {
 
   Map<String, dynamic> toMap() {
     return {
-      'matchedRuleId': matchedRuleId,
+      'id': id,
+      'plannedTourId': plannedTourId,
       'ruleId': ruleId,
-      'date': date.toIso8601String(),
+      'date': date.millisecondsSinceEpoch,
       'read': read,
       'name': name,
       'text': text,
@@ -39,11 +42,25 @@ class MatchedRule {
     };
   }
 
+  MatchedRule.fromMap(Map<String, dynamic> map)
+      : id = map['id'],
+        plannedTourId = map['plannedTourId'],
+        ruleId = map['ruleId'],
+        date = DateTime.fromMillisecondsSinceEpoch(map['date']),
+        read = map['read'] == 1,
+        name = map['name'],
+        text = map['text'],
+        hiking = map['hiking'] == 1,
+        areaId = map['areaId'],
+        latitude = map['latitude'],
+        longitude = map['longitude'];
+
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS matched_rule (
-      matchedRuleId INTEGER PRIMARY KEY AUTOINCREMENT,
+      id TEXT PRIMARY KEY,
+      plannedTourId TEXT,
       ruleId INTEGER,
-      date TEXT,
+      date INTEGER,
       read INTEGER,
       name TEXT,
       text TEXT,

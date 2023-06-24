@@ -13,7 +13,6 @@ import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
-import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:snowscape_tracker/widgets/custom_app_bar.dart';
@@ -73,7 +72,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       if (path.isNotEmpty) {
         debugPrint("path recovered from shared preferences: $path");
         RecordActivityCommand().recordActivityModel.setPoints = path;
-        await MapCommand().updatePolyline(path, "recorded");
+        await MapCommand().updatePolyline(path, "recorded", null);
       }
     }
 
@@ -134,7 +133,10 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
     void handleLocationUpdate(bg.Location location) {
       // debugPrint('Location update received');
-      MapCommand().updateCameraPosition(currentLocation);
+      if (!tourPlanningContainerVisible) {
+        // we don't want to update the camera position if the user is planning a tour
+        MapCommand().updateCameraPosition(currentLocation);
+      }
 
       if (recordingStatus == RecordingStatus.recording &&
           recordedActivity != null &&
@@ -142,7 +144,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         // update RecordedActivity's array of points only if the user is recording an activity and recordedActivity is initialized
         RecordActivityCommand().addPointToRecordedActivity(currentLocation!);
 
-        MapCommand().updatePolyline(points, "recorded");
+        MapCommand().updatePolyline(points, "recorded", null);
       }
     }
 
@@ -160,7 +162,35 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       if (recoveredPath &&
           RecordActivityCommand().recordActivityModel.points != null) {
         await MapCommand().updatePolyline(
-            RecordActivityCommand().recordActivityModel.points, "recorded");
+            RecordActivityCommand().recordActivityModel.points,
+            "recorded",
+            controller);
+      } else if (PlannedTourCommand().isTourPlanning()) {
+        List<LatLng>? route = PlannedTourCommand().getRoute();
+        // if the user has started tour planning before, we need to draw the polyline
+        if (route != null) {
+          await MapCommand().updatePolyline(route, "planned", controller);
+        }
+
+        List<Marker>? markers = PlannedTourCommand().getMarkers();
+        if (markers != null && markers.isNotEmpty) {
+          await MapCommand().updateMarkers(markers);
+          // update the camera position to the last marker
+          var cameraPosition = CameraPosition(
+            target: markers.last.point,
+            zoom: 12.0,
+            bearing: 0,
+          );
+          MapCommand()
+              .mapModel
+              .mapController!
+              .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+        }
+
+        if (PlannedTourCommand().plannedTourModel.matchedRules.isNotEmpty) {
+          MapCommand().addWarningMarkers(
+              PlannedTourCommand().plannedTourModel.matchedRules, context);
+        }
       }
     }
 
@@ -175,13 +205,16 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         if (PlannedTourCommand().isTourPlanning()) {
           // add coordinate to marker array and draw a line between markers
           PlannedTourCommand().handleRouteUpdate(coordinates).then((value) {
-            MapCommand()
-                .updatePolyline(PlannedTourCommand().getRoute(), "planned");
+            List<LatLng>? route = PlannedTourCommand().getRoute();
+
+            if (route != null) {
+              MapCommand().updatePolyline(route, "planned", null);
+            }
           });
         } else {
           // create a new planned tour object and add the first marker
           PlannedTourCommand().startTourPlanning();
-          Marker marker = Marker(coordinates, 0.0, 0.0);
+          Marker marker = Marker("", coordinates, 0.0, 0.0);
           marker.isStartMarker = true;
           PlannedTourCommand().addMarker(marker);
         }

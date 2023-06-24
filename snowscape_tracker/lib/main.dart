@@ -11,6 +11,9 @@ import 'package:snowscape_tracker/data/bulletin/avalanche_bulletin.dart';
 import 'package:snowscape_tracker/data/bulletin/danger_bulletin.dart';
 import 'package:snowscape_tracker/data/bulletin/pattern_bulletin.dart';
 import 'package:snowscape_tracker/data/bulletin/problem_bulletin.dart';
+import 'package:snowscape_tracker/data/plannedTourDb/planned_tour_db.dart';
+import 'package:snowscape_tracker/data/plannedTourDb/route_point_db.dart';
+import 'package:snowscape_tracker/data/planned_tour.dart';
 import 'package:snowscape_tracker/data/rules/danger_rule.dart';
 import 'package:snowscape_tracker/data/rules/jsonObjects/rules_json.dart';
 import 'package:snowscape_tracker/data/rules/matched_rule.dart';
@@ -216,7 +219,10 @@ Future main() async {
       await db.execute(DangerBulletin.createTable());
       await db.execute(PatternBulletin.createTable());
       await db.execute(ProblemBulletin.createTable());
-      return await db.execute(MatchedRule.createTable());
+      await db.execute(PlannedTourDb.createTable());
+      await db.execute(MatchedRule.createTable());
+      await db.execute(Marker.createTable());
+      await db.execute(RoutePointDb.createTable());
     },
   );
 

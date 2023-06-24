@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
+import 'package:snowscape_tracker/helpers/alert_dialog.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class SaveRecordedActivityPage extends StatefulWidget {
@@ -13,6 +14,8 @@ class SaveRecordedActivityPage extends StatefulWidget {
 }
 
 class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
+  int confirm = -1;
+
   @override
   Widget build(BuildContext context) {
     void saveTour() async {
@@ -20,12 +23,27 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
       RecordActivityCommand().saveRecordedActivity().then((success) async {
         Navigator.of(context).pop();
         if (success) {
-          // we clear the map
+          // we clear the aaa
           await MapCommand().clearMap();
           // and clear the recorded activity from the shared preferences
           UserPreferences.clearRecordedActivity();
         }
       });
+    }
+
+    void discardTour() async {
+      // we clear the map
+      RecordActivityCommand().endRecordedActivity();
+      await MapCommand().clearMap();
+      // and clear the recorded activity from the shared preferences
+      UserPreferences.clearRecordedActivity();
+      // and pop the save recorded activity page
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }
+
+    void cancel() {
+      Navigator.of(context).pop();
     }
 
     return Scaffold(
@@ -168,7 +186,14 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showAlertDialog(
+                                context,
+                                "Discard recorded tour",
+                                "Are you sure you want to discard this recorded tour?",
+                                discardTour,
+                                cancel);
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               side: BorderSide(
