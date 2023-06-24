@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
@@ -17,6 +18,7 @@ class UserPreferences {
   static const String _backgroundTimestampMiliseconds =
       'backgroundTimestampMiliseconds';
   static const String _isFirstLoad = 'isFirstLoad';
+  static const String _weatherLastUpdate = 'weatherLastUpdate';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -35,6 +37,13 @@ class UserPreferences {
   }
 
   static String getUserUid() => _preferences!.getString(_userUid) ?? '';
+
+  static String getWeatherLastUpdate() =>
+      _preferences!.getString(_weatherLastUpdate) ?? '';
+
+  static Future setWeatherLastUpdate(DateTime today) async =>
+      await _preferences!.setString(
+          _weatherLastUpdate, DateFormat('dd-MM-yyyy').format(today));
 
   static Future setRecording(RecordingStatus recordingStatus) async {
     if (_preferences == null) {

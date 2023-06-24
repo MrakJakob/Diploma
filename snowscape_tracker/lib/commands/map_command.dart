@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:snowscape_tracker/data/planned_tour.dart';
+import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 
 class MapCommand extends BaseCommand {
   void initiateMap(MapboxMapController controller) {
@@ -26,8 +28,10 @@ class MapCommand extends BaseCommand {
     );
   }
 
-  Future<void> updatePolyline(List<LatLng> points, String type) async {
-    if (mapModel.mapController == null || points.isEmpty) return;
+  Future<void> updatePolyline(
+      List<LatLng> points, String type, MapboxMapController? controller) async {
+    MapboxMapController? mapController = controller ?? mapModel.mapController;
+    if (mapController == null || points.isEmpty) return;
 
     var color =
         type == 'recorded' // TODO: this is temporary, change in the future
@@ -35,16 +39,19 @@ class MapCommand extends BaseCommand {
             : type == 'planned'
                 ? '#FF0000'
                 : '#000000';
+    while (mapController.lineManager == null) {
+      await Future.delayed(Duration(milliseconds: 100));
+    }
 
-    if (mapModel.mapController?.lineManager == null ||
-        mapModel.mapController?.addLine == null) return;
-    await mapModel.mapController?.addLine(
-      LineOptions(
-        geometry: points,
-        lineColor: color,
-        lineWidth: 4.0,
-      ),
-    );
+    mapController.lineManager != null
+        ? await mapController.addLine(
+            LineOptions(
+              geometry: points,
+              lineColor: color,
+              lineWidth: 4.0,
+            ),
+          )
+        : null;
   }
 
   Future<void> clearMap() async {
@@ -81,6 +88,9 @@ class MapCommand extends BaseCommand {
   }
 
   Future addMarker(LatLng marker) async {
+    if (mapModel.mapController == null ||
+        marker == null ||
+        mapModel.mapController!.symbolManager == null) return;
     return await mapModel.mapController?.addSymbol(
       SymbolOptions(
         geometry: marker,
@@ -90,9 +100,99 @@ class MapCommand extends BaseCommand {
     );
   }
 
-  // void removeLastMarker() {
-  //   mapModel.mapController?.addSource("s", GeoJsonSource(data: null));
-  // }
+  Future<void> showAlertInfo(Symbol symbol, BuildContext context,
+      List<List<MatchedRule>> matchedRulesOnTheSameLocation) async {
+    if (symbol.data == null) return;
+
+    int groupIndex = symbol.data!['groupIndex'] ?? 0;
+    List<MatchedRule> matchedRules = matchedRulesOnTheSameLocation[groupIndex];
+
+    for (MatchedRule matchedRule in matchedRules) {
+      // show alert dialog with the rule info
+      showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(matchedRule.name),
+              content: SingleChildScrollView(
+                child: ListBody(children: <Widget>[
+                  Text(matchedRule.text),
+                ]),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Close'),
+                ),
+              ],
+            );
+          });
+    }
+  }
+
+  List<List<MatchedRule>> groupMatchedRulesByLocation(
+      List<MatchedRule> matchedRules) {
+    List<List<MatchedRule>> matchedRulesOnSameLocation = [[]];
+    int groupIndex = 0;
+
+    // Group matched rules by location, so that we can show only one marker
+    for (MatchedRule matchedRule in matchedRules) {
+      if (matchedRulesOnSameLocation[groupIndex].isEmpty) {
+        matchedRulesOnSameLocation[groupIndex].add(matchedRule);
+        continue;
+      }
+
+      if (matchedRulesOnSameLocation[groupIndex].first.latitude ==
+              matchedRule.latitude &&
+          matchedRulesOnSameLocation[groupIndex].first.longitude ==
+              matchedRule.longitude) {
+        matchedRulesOnSameLocation[groupIndex].add(matchedRule);
+      } else {
+        matchedRulesOnSameLocation.add([matchedRule]);
+        groupIndex++;
+      }
+    }
+    return matchedRulesOnSameLocation;
+  }
+
+  Future<void>? addWarningMarkers(
+      List<MatchedRule> matchedRules, BuildContext context) {
+    if (mapModel.mapController == null) return null;
+
+    // if we have more then one matched rule on the same location, we group them,
+    // and add only one marker with all the rules
+    List<List<MatchedRule>> matchedRulesOnSameLocation =
+        groupMatchedRulesByLocation(matchedRules);
+    int groupIndex = 0;
+    matchedRulesOnSameLocation.forEach((matchedRulesGroup) async {
+      await mapModel.mapController?.addSymbol(
+          SymbolOptions(
+            geometry: LatLng(
+              matchedRulesGroup.first.latitude,
+              matchedRulesGroup.first.longitude,
+            ),
+            iconImage: 'assets/warningAlert.png',
+            iconSize: 0.2,
+          ),
+          {
+            'groupIndex': groupIndex,
+          });
+      groupIndex++;
+    });
+
+    mapModel.mapController?.onSymbolTapped.add((symbol) {
+      print('Symbol tapped: ${symbol.id}');
+      showAlertInfo(symbol, context, matchedRulesOnSameLocation);
+    });
+  }
+
+  Future<void> stopTourPlanning() async {
+    await MapCommand().clearMap();
+    MapCommand().hideTourPlanningContainer();
+  }
 
   void resetController() {
     mapModel.mapController = null;

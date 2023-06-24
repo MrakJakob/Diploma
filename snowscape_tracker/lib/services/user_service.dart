@@ -6,7 +6,7 @@ import 'package:snowscape_tracker/utils/user_preferences.dart';
 class UserService {
   Future<bool> login(String email, String password) async {
     try {
-      FirebaseAuth.instance
+      await FirebaseAuth.instance
           .signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -24,6 +24,8 @@ class UserService {
       } else if (e.code == 'wrong-password') {
         // print('Wrong password provided for that user.');
         SnackBarWidget.show('Wrong password provided for that user.');
+      } else {
+        SnackBarWidget.show(e.code);
       }
 
       return false;

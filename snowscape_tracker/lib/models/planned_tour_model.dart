@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/data/planned_tour.dart';
+import 'package:snowscape_tracker/data/rules/matched_rule.dart';
+import '../services/mapbox_service.dart';
 
 class PlannedTourModel extends ChangeNotifier {
   bool _isTourPlanning = false;
   PlannedTour? _plannedTour;
   bool _drawStraightLine = false;
+  bool _loadingPathData = false;
+  List<ContextPoint> _contextPoints = [];
+  // List<MatchedRule> _matchedRules = [];
+
+  set setLoadingPathData(bool status) {
+    _loadingPathData = status;
+    notifyListeners();
+  }
+
+  bool get loadingPathData => _loadingPathData;
 
   // we set this to true when the user sets the first marker on the map
   set isTourPlanning(bool status) {
@@ -13,18 +25,45 @@ class PlannedTourModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  set setId(String? id) {
+    _plannedTour?.id = id;
+    notifyListeners();
+  }
+
+  get id => _plannedTour?.id;
+
   bool get isTourPlanning => _isTourPlanning;
+
+  final TextEditingController _plannedTourNameController =
+      TextEditingController();
+
+  TextEditingController get plannedTourNameController =>
+      _plannedTourNameController;
 
   void createPlannedTour() {
     _plannedTour = PlannedTour();
   }
 
-  set setPlannedTour(PlannedTour plannedTour) {
+  set setPlannedTour(PlannedTour? plannedTour) {
     _plannedTour = plannedTour;
     notifyListeners();
   }
 
   get plannedTour => _plannedTour;
+
+  get contextPoints => _contextPoints;
+
+  set setContextPoints(List<ContextPoint> contextPoints) {
+    _contextPoints = contextPoints;
+    notifyListeners();
+  }
+
+  get matchedRules => _plannedTour?.matchedRules;
+
+  set setMatchedRules(List<MatchedRule> matchedRules) {
+    _plannedTour?.matchedRules = matchedRules;
+    notifyListeners();
+  }
 
   set marker(Marker marker) {
     // WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -65,15 +104,22 @@ class PlannedTourModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeLastRoute() {
+  Future<void> removeLastRoute() async {
     // remove last added segment in the route
+    List<LatLng> route = _plannedTour?.route ?? [];
     Marker? lastMarker = _plannedTour?.markers.last;
     if (lastMarker != null && _plannedTour?.route != null) {
-      var index = _plannedTour?.route.indexWhere((element) =>
-          element.latitude.toStringAsFixed(3) ==
-              lastMarker.point.latitude.toStringAsFixed(3) &&
-          element.longitude.toStringAsFixed(3) ==
-              lastMarker.point.longitude.toStringAsFixed(3));
+      var nearestPoint = route.isEmpty
+          ? null
+          : route.reduce(
+              (a, b) => (a.latitude - lastMarker.point.latitude).abs() +
+                          (a.longitude - lastMarker.point.longitude).abs() <
+                      (b.latitude - lastMarker.point.latitude).abs() +
+                          (b.longitude - lastMarker.point.longitude).abs()
+                  ? a
+                  : b,
+            );
+      var index = nearestPoint != null ? route.indexOf(nearestPoint) : -1;
       if (index != -1) {
         // we find the closest marker in the route and remove all the markers after that
         for (int i = index! + 1; i < _plannedTour!.route.length; i++) {
@@ -95,6 +141,7 @@ class PlannedTourModel extends ChangeNotifier {
         // create a sublist from the beginning to the index of the last marker
         List<LatLng>? sublist = _plannedTour?.route.sublist(0, index);
         _plannedTour?.route = sublist ?? [];
+        return Future.value();
       }
     }
     notifyListeners();

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/profile_command.dart';
 import 'package:snowscape_tracker/models/profile_model.dart';
+import 'package:snowscape_tracker/views/saved_planned_tours_page.dart';
 import 'package:snowscape_tracker/views/saved_recorded_activites_page.dart';
 
 class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     var index =
@@ -59,8 +61,8 @@ class ProfilePage extends StatelessWidget {
                   child: TextButton(
                     onPressed: () => switchPage(0),
                     child: Text(
-                      'Saved tours',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      'My tours',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             color: index == 0
                                 ? Theme.of(context).primaryColor
                                 : Colors.black,
@@ -86,8 +88,8 @@ class ProfilePage extends StatelessWidget {
                   child: TextButton(
                     onPressed: () => switchPage(1),
                     child: Text(
-                      'Settings',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      'Planned tours',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                             color: index == 1
                                 ? Theme.of(context).primaryColor
                                 : Colors.black,
@@ -104,7 +106,7 @@ class ProfilePage extends StatelessWidget {
             index: index,
             children: const [
               SavedRecordedActivitiesPage(),
-              Text('Settings page'),
+              SavedPlannedToursPage(),
             ],
           ),
         ),
