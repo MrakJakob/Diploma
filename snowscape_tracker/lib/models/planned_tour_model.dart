@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/data/planned_tour.dart';
 import 'package:snowscape_tracker/data/rules/matched_rule.dart';
-import '../services/mapbox_service.dart';
+import 'package:snowscape_tracker/services/arcGIS_service.dart';
 
 class PlannedTourModel extends ChangeNotifier {
   bool _isTourPlanning = false;
@@ -122,15 +122,15 @@ class PlannedTourModel extends ChangeNotifier {
       var index = nearestPoint != null ? route.indexOf(nearestPoint) : -1;
       if (index != -1) {
         // we find the closest marker in the route and remove all the markers after that
-        for (int i = index! + 1; i < _plannedTour!.route.length; i++) {
+        for (int i = index + 1; i < _plannedTour!.route.length; i++) {
           if ((_plannedTour!.route[i].latitude - lastMarker.point.latitude)
                       .abs() <
-                  (_plannedTour!.route[index!].latitude -
+                  (_plannedTour!.route[index].latitude -
                           lastMarker.point.latitude)
                       .abs() &&
               (_plannedTour!.route[i].longitude - lastMarker.point.longitude)
                       .abs() <
-                  (_plannedTour!.route[index!].longitude -
+                  (_plannedTour!.route[index].longitude -
                           lastMarker.point.longitude)
                       .abs()) {
             index = i;
@@ -161,7 +161,7 @@ class PlannedTourModel extends ChangeNotifier {
 
   get distance => _plannedTour?.distance;
 
-  set setTotalElevationGain(int elevationGain) {
+  set setTotalElevationGain(double elevationGain) {
     _plannedTour?.totalElevationGain = elevationGain;
     notifyListeners();
   }

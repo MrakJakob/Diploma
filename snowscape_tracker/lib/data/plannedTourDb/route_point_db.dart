@@ -22,6 +22,11 @@ class RoutePointDb {
         point = LatLng(map['latitude'], map['longitude']);
 
   static createTable() {
-    return '''CREATE TABLE IF NOT EXISTS route_points (id TEXT PRIMARY KEY, plannedTourId TEXT, latitude REAL, longitude REAL )''';
+    return '''CREATE TABLE IF NOT EXISTS route_points (id TEXT PRIMARY KEY,
+      plannedTourId TEXT,
+      latitude REAL,
+      longitude REAL,
+      FOREIGN KEY(plannedTourId) REFERENCES planned_tours(id) ON DELETE CASCADE
+      )''';
   }
 }

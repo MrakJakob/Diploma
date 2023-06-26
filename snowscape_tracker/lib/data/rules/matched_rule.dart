@@ -56,7 +56,7 @@ class MatchedRule {
         longitude = map['longitude'];
 
   static createTable() {
-    return '''CREATE TABLE IF NOT EXISTS matched_rule (
+    return '''CREATE TABLE IF NOT EXISTS matched_rules (
       id TEXT PRIMARY KEY,
       plannedTourId TEXT,
       ruleId INTEGER,
@@ -67,7 +67,8 @@ class MatchedRule {
       hiking INTEGER,
       areaId INTEGER,
       latitude REAL,
-      longitude REAL
+      longitude REAL,
+      FOREIGN KEY (plannedTourId) REFERENCES planned_tours(id) ON DELETE CASCADE
     )''';
   }
 }

@@ -41,10 +41,12 @@ class Marker {
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS markers (id TEXT PRIMARY KEY,
     plannedTourId TEXT,
-    latitude REAL, longitude REAL, 
+    latitude REAL, longitude REAL,
     distanceAtMarker REAL, durationAtMarker REAL,
     elevationAtMarker INTEGER, isStartMarker INTEGER,
-    isFinishMarker INTEGER )''';
+    isFinishMarker INTEGER,
+    FOREIGN KEY(plannedTourId) REFERENCES planned_tours(id) ON DELETE CASCADE,FOREIGN KEY(plannedTourId) REFERENCES planned_tours(id) ON DELETE CASCADE
+    )''';
   }
 }
 
@@ -52,7 +54,7 @@ class PlannedTour {
   String? id;
   String tourName = "";
   double distance = 0.0;
-  int totalElevationGain = 0;
+  double totalElevationGain = 0;
   double duration = 0;
   late List<Marker> markers;
   late List<LatLng> route;

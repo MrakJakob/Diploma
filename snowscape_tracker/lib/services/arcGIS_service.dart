@@ -3,18 +3,22 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
+import 'package:snowscape_tracker/helpers/geo_properties_calculator.dart';
 
 class ContextPoint {
   LatLng point;
   double elevation;
   double aspect;
   double slope;
+  double distanceFromStart;
 
-  ContextPoint(this.point, this.elevation, this.aspect, this.slope);
+  ContextPoint(this.point, this.elevation, this.aspect, this.slope,
+      this.distanceFromStart);
 }
 
-class ArcGISService {
+class ArcGISService extends BaseCommand {
   final dio = Dio();
 
   List<List> formatPoints(List<LatLng> points) {
@@ -67,8 +71,11 @@ class ArcGISService {
   }
 
   Future<bool> checkStatus(String jobId) async {
+    // String url =
+    //     "https://elevation.arcgis.com/arcgis/rest/services/Tools/Elevation/GPServer/SummarizeElevation/jobs/$jobId";
+
     String url =
-        "https://elevation.arcgis.com/arcgis/rest/services/Tools/Elevation/GPServer/SummarizeElevation/jobs/$jobId";
+        "https://elevation.arcgis.com/arcgis/rest/services/Tools/Elevation/GPServer/Profile/jobs/$jobId";
     const parameters = {
       "token":
           "AAPKdd71a846aa114aa99a41c42d20b3b56axTyOGS9vd-DdXMptK5a0vWNL56_uajIO5SEZZ_oMtaQXFK5gsmw8NgjNVZ7lyfXP",
@@ -127,8 +134,8 @@ class ArcGISService {
         if (elevation == null || slope == null || aspect == null) {
           return null;
         }
-        return ContextPoint(
-            point, elevation.toDouble(), aspect.toDouble(), slope.toDouble());
+        return ContextPoint(point, elevation.toDouble(), aspect.toDouble(),
+            slope.toDouble(), 0);
       } else {
         throw Exception(response.statusCode);
       }
@@ -249,23 +256,113 @@ class ArcGISService {
     return totalElevationGain;
   }
 
-  //   await for (final value in stream(route)) {
-  //     if (value == null) {
-  //       continue;
-  //     }
+  Future<Response?> submitJobNew(List<LatLng> path) async {
+    String url =
+        "https://elevation.arcgis.com/arcgis/rest/services/Tools/Elevation/GPServer/Profile/submitJob";
 
-  //     if (previousElevation == -1) {
-  //       previousElevation = value;
-  //       continue;
-  //     }
+    try {
+      final response = await dio.post(
+        url,
+        queryParameters: {
+          'token':
+              'AAPKdd71a846aa114aa99a41c42d20b3b56axTyOGS9vd-DdXMptK5a0vWNL56_uajIO5SEZZ_oMtaQXFK5gsmw8NgjNVZ7lyfXP',
+          'f': 'json',
+          'InputLineFeatures': json.encode(
+            {
+              "geometryType": "esriGeometryPolyline",
+              "features": [
+                {
+                  "geometry": {
+                    "paths": [
+                      path
+                          .map(
+                            (e) => [e.longitude, e.latitude],
+                          )
+                          .toList()
+                    ],
+                    "spatialReference": {"wkid": 4326}
+                  }
+                }
+              ]
+            },
+          ),
+          'DEMResolution': 'FINEST',
+        },
+      );
+      if (response != null) {
+        debugPrint("Response: ${response.data}");
+      }
+      return response;
+    } on Exception catch (e) {
+      debugPrint("Error: $e");
+      rethrow;
+    }
+  }
 
-  //     if (value > previousElevation) {
-  //       totalElevationGain += value - previousElevation;
-  //     }
+  Future<List<ContextPoint>?> getResultsNew(
+      String jobId, List<LatLng> points) async {
+    List<ContextPoint>? contextPoints = [];
+    String resultsUrl =
+        "https://elevation.arcgis.com/arcgis/rest/services/Tools/Elevation/GPServer/Profile/jobs/$jobId/results/OutputProfile";
 
-  //     previousElevation = value;
-  //   }
-  //   return totalElevationGain;
-  // }
-// }
+    try {
+      final response = await dio.get(
+        resultsUrl,
+        queryParameters: {
+          'token':
+              'AAPKdd71a846aa114aa99a41c42d20b3b56axTyOGS9vd-DdXMptK5a0vWNL56_uajIO5SEZZ_oMtaQXFK5gsmw8NgjNVZ7lyfXP',
+          'f': 'json',
+          'returnZ': true,
+          'returnM': true,
+        },
+      );
+      if (response != null &&
+          response.statusCode == 200 &&
+          response.data != null) {
+        var path =
+            response.data['value']['features'][0]['geometry']['paths'][0];
+        debugPrint("Response: ${response.data}");
+        for (var i = 0; i < path.length; i++) {
+          var point = path[i];
+          var contextPoint = ContextPoint(
+              LatLng(point[1], point[0]), point[2], 0, 0, point[3].toDouble());
+          contextPoints.add(contextPoint);
+        }
+      }
+    } on Exception catch (e) {
+      debugPrint("Error: $e");
+      rethrow;
+    }
+    if (contextPoints == null || contextPoints.isEmpty) {
+      return contextPoints;
+    }
+    GeoPropertiesCalculator().calculatePathSlope(contextPoints);
+    GeoPropertiesCalculator().calculatePathAspect(contextPoints);
+
+    return contextPoints;
+  }
+
+  Future<double> getPathElevation(List<LatLng> path) async {
+    final response = await submitJobNew(path);
+    if (response != null &&
+        response.statusCode == 200 &&
+        response.data != null) {
+      var jobId = response.data['jobId'];
+      var status = await checkStatus(jobId);
+      if (status) {
+        List<ContextPoint>? contextPoints = await getResultsNew(jobId, path);
+
+        if (contextPoints == null || contextPoints.isEmpty) {
+          return 0;
+        }
+        plannedTourModel.setContextPoints = contextPoints;
+
+        double totalElevationGain =
+            GeoPropertiesCalculator().calculateElevationGain(contextPoints);
+
+        return totalElevationGain;
+      }
+    }
+    return 0;
+  }
 }
