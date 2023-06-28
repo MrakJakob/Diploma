@@ -4,16 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
-import 'package:snowscape_tracker/helpers/calculate_distance_haversine.dart';
-
-class ContextPoint {
-  LatLng point;
-  double elevation;
-  double aspect;
-  double slope;
-
-  ContextPoint(this.point, this.elevation, this.aspect, this.slope);
-}
+import 'package:snowscape_tracker/helpers/geo_properties_calculator.dart';
+import 'package:snowscape_tracker/services/arcGIS_service.dart';
 
 class MapboxService extends BaseCommand {
   // Direction API
@@ -24,7 +16,7 @@ class MapboxService extends BaseCommand {
 
   Future getRoute(LatLng start, LatLng finish) async {
     String url =
-        '$baseUrl/$navigationType/${start.longitude},${start.latitude};${finish.longitude},${finish.latitude}?geometries=geojson&access_token=$accessToken';
+        '$baseUrl/$navigationType/${start.longitude},${start.latitude};${finish.longitude},${finish.latitude}?geometries=geojson&access_token=$accessToken&walking_speed=1';
 
     try {
       dio.options.contentType = Headers.jsonContentType;
@@ -109,7 +101,7 @@ class MapboxService extends BaseCommand {
       if (value > previousElevation) {
         totalElevationGain += value - previousElevation;
       }
-      contextPoints.add(ContextPoint(route[index], value.toDouble(), 0, 0));
+      contextPoints.add(ContextPoint(route[index], value.toDouble(), 0, 0, 0));
       index++;
       previousElevation = value;
     }
@@ -134,7 +126,8 @@ class MapboxService extends BaseCommand {
     final dElevation2 = point3.elevation - point2.elevation;
 
     // Calculate the distance between point1 and point3
-    final distance = calculateDistanceHaversine(point1.point, point2.point) *
+    final distance = GeoPropertiesCalculator()
+            .calculateDistanceHaversine(point1.point, point2.point) *
         1000; // convert to meters *1000
 
     // Interpolate the elevation at the midpoint between p1 and p3

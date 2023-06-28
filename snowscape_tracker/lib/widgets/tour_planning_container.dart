@@ -25,7 +25,7 @@ class TourPlanningContainer extends StatelessWidget {
       (model) => model.drawStraightLine,
     );
 
-    int? totalElevationGain = context.select<PlannedTourModel, int?>(
+    double? totalElevationGain = context.select<PlannedTourModel, double?>(
       (model) => model.totalElevationGain,
     );
 
@@ -239,7 +239,7 @@ class TourPlanningContainer extends StatelessWidget {
                       ),
                       Text(
                         totalElevationGain != null
-                            ? totalElevationGain.toString()
+                            ? totalElevationGain.toStringAsFixed(1)
                             : "0",
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(

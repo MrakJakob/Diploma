@@ -2,7 +2,7 @@ class PlannedTourDb {
   String? id;
   String tourName;
   double distance;
-  int totalElevationGain;
+  double totalElevationGain;
   double duration;
 
   PlannedTourDb({
@@ -36,7 +36,7 @@ class PlannedTourDb {
         id TEXT PRIMARY KEY,
         tourName TEXT,
         distance REAL,
-        totalElevationGain INTEGER,
+        totalElevationGain REAL,
         duration REAL
       )
     ''';

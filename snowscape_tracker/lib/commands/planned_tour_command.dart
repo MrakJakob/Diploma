@@ -162,8 +162,12 @@ class PlannedTourCommand extends BaseCommand {
     plannedTourModel.setLoadingPathData = true;
     // int totalElevation =
     //     await arcGISService.getElevationGain(plannedTourModel.route);
-    int totalElevation =
-        await mapBoxService.getElevationGain(plannedTourModel.route);
+    // int totalElevation =
+    //     await mapBoxService.getElevationGain(plannedTourModel.route);
+
+    double totalElevation =
+        await arcGISService.getPathElevation(plannedTourModel.route);
+
     plannedTourModel.setTotalElevationGain = totalElevation;
     plannedTourModel.setLoadingPathData = false;
 
@@ -204,7 +208,7 @@ class PlannedTourCommand extends BaseCommand {
         whereArgs: [plannedTour.id],
       );
       await db.delete(
-        'matched_rule',
+        'matched_rules',
         where: "plannedTourId = ?",
         whereArgs: [plannedTour.id],
       );
@@ -244,7 +248,7 @@ class PlannedTourCommand extends BaseCommand {
       matchedRule.id = uuid.v4();
       matchedRule.plannedTourId = plannedTourId;
       await db.insert(
-        'matched_rule',
+        'matched_rules',
         matchedRule.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
@@ -280,7 +284,7 @@ class PlannedTourCommand extends BaseCommand {
     });
 
     final List<Map<String, dynamic>> matchedRulesMaps =
-        await database.query('matched_rule');
+        await database.query('matched_rules');
 
     List<MatchedRule> matchedRulesList =
         List.generate(matchedRulesMaps.length, (i) {

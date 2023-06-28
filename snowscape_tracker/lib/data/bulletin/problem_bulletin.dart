@@ -40,8 +40,8 @@ class ProblemBulletin {
       avAreaId: json['avAreaId'],
       elevationFrom: json['elevationFrom'].round(),
       elevationTo: json['elevationTo'].round(),
-      validEnd: json['validEnd'],
-      validStart: json['validStart'],
+      validEnd: (json['validEnd']) as int,
+      validStart: (json['validStart']) as int,
     );
   }
 

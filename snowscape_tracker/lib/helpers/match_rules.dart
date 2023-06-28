@@ -17,8 +17,8 @@ import 'package:snowscape_tracker/data/rules/rule.dart';
 import 'package:snowscape_tracker/data/rules/rule_with_lists.dart';
 import 'package:snowscape_tracker/data/rules/weather_description.dart';
 import 'package:snowscape_tracker/data/weather/weather_hour.dart';
-import 'package:snowscape_tracker/helpers/calculate_distance_haversine.dart';
-import 'package:snowscape_tracker/services/mapbox_service.dart';
+import 'package:snowscape_tracker/helpers/geo_properties_calculator.dart';
+import 'package:snowscape_tracker/services/arcGIS_service.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:maps_toolkit/maps_toolkit.dart' as mp;
 
@@ -71,7 +71,8 @@ Future<List<ContextPoint>> getApproximateRoute(List<ContextPoint> route) async {
       approximateRoute.add(point);
     } else {
       var lastPoint = approximateRoute.last;
-      var distance = calculateDistanceHaversine(lastPoint.point, point.point) *
+      var distance = GeoPropertiesCalculator()
+              .calculateDistanceHaversine(lastPoint.point, point.point) *
           1000; // distance in meters
 
       // we check if the distance between two points is more than 250 meters and less than 350 meters

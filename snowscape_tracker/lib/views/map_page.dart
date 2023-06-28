@@ -168,6 +168,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       } else if (PlannedTourCommand().isTourPlanning()) {
         List<LatLng>? route = PlannedTourCommand().getRoute();
         // if the user has started tour planning before, we need to draw the polyline
+
         if (route != null) {
           await MapCommand().updatePolyline(route, "planned", controller);
         }
