@@ -239,7 +239,7 @@ class TourPlanningContainer extends StatelessWidget {
                       ),
                       Text(
                         totalElevationGain != null
-                            ? totalElevationGain.toStringAsFixed(2)
+                            ? totalElevationGain.toStringAsFixed(1)
                             : "0",
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
