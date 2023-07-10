@@ -15,6 +15,7 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _displayNameController = TextEditingController();
 
   bool _isLoading = false;
 
@@ -28,8 +29,8 @@ class _SignupPageState extends State<SignupPage> {
     setState(() {
       _isLoading = true;
     });
-    bool success = await SignupCommand()
-        .execute(_emailController.text.trim(), _passwordController.text.trim());
+    bool success = await SignupCommand().execute(_emailController.text.trim(),
+        _passwordController.text.trim(), _displayNameController.text.trim());
     if (!success) {
       setState(() {
         _isLoading = false;
@@ -77,6 +78,21 @@ class _SignupPageState extends State<SignupPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (_isLoading) const CircularProgressIndicator(),
+                      TextFormField(
+                        controller: _displayNameController,
+                        decoration: InputDecoration(
+                          hintText: "Display Name",
+                          hintStyle: Theme.of(context).textTheme.labelMedium,
+                          border: OutlineInputBorder(),
+                        ),
+                        textInputAction: TextInputAction.next,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (displayName) =>
+                            displayName == null || displayName == ""
+                                ? "Enter your name"
+                                : null,
+                      ),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(

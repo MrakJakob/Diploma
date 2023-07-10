@@ -178,18 +178,6 @@ Future<void> populateDatabase(Database db) async {
   }
 }
 
-// void testRules(Database db) async {
-//   db.query('rules').then((value) => debugPrint("Database: Rules: $value"));
-//   db.query('weather_description_rule').then((value) => debugPrint(
-//       "Database: Weather description rule: $value")); // TODO: remove debug print
-//   db.query('pattern_rule').then((value) =>
-//       debugPrint("Database: Pattern rule: $value")); // TODO: remove debug print
-//   db.query('problem_rule').then((value) =>
-//       debugPrint("Database: Problem rule: $value")); // TODO: remove debug print
-//   db.query('danger_rule').then((value) =>
-//       debugPrint("Database: Danger rule: $value")); // TODO: remove debug print
-// }
-
 Future<void> deleteDatabase(String path) =>
     databaseFactory.deleteDatabase(path);
 
@@ -245,9 +233,9 @@ Future main() async {
       DateFormat("yyyy-MM-dd").parse(DateTime.now().toString());
   String lastAdded = UserPreferences.getWeatherLastUpdate();
 
+  var todaysDateFormated = DateFormat('dd-MM-yyyy').format(todaysDate);
   // if we have not updated the weather and avalanche data today, we need to update it
-  if (lastAdded == '' ||
-      DateFormat("yyyy-MM-dd").parse(lastAdded) != todaysDate) {
+  if (lastAdded != todaysDateFormated) {
     // TODO: remove lastAdded == '' check when finished testing
     // Get weather data for the next days and save it to the local database if it is not already there for today
 
@@ -321,7 +309,7 @@ class _MainPageState extends State<MainPage> {
                 child: Text('Something went wrong'),
               );
             } else if (snapshot.hasData) {
-              return MainAppContainerPage();
+              return const MainAppContainerPage();
             } else {
               return AuthPage();
             }

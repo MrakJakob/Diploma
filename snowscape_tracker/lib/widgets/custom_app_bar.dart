@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/logout_command.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
@@ -6,11 +7,14 @@ import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/helpers/alert_dialog.dart';
+import 'package:snowscape_tracker/models/map_model.dart';
 import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class CustomAppBar extends StatelessWidget {
+  const CustomAppBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     RecordingStatus recordingStatus =
@@ -20,6 +24,10 @@ class CustomAppBar extends StatelessWidget {
 
     bool isTourPlanning = context.select<PlannedTourModel, bool>(
       (plannedTourModel) => plannedTourModel.isTourPlanning,
+    );
+
+    String selectedFunctionality = context.select<MapModel, String>(
+      (recordActivityModel) => recordActivityModel.selectedFunctionality,
     );
 
     void showRecordingContainer() {
@@ -72,38 +80,81 @@ class CustomAppBar extends StatelessWidget {
     return SafeArea(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          IconButton(
-            icon: const Icon(
-              Icons.route,
-              color: Colors.white,
-            ),
-            iconSize: 38,
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               showTourPlanningContainer();
             },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.radio_button_checked,
-              color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  TablerIcons.route,
+                  color: selectedFunctionality == 'plan'
+                      ? Theme.of(context).secondaryHeaderColor
+                      : Colors.white.withOpacity(0.7),
+                  size: 28,
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'Plan',
+                  style: TextStyle(
+                    color: selectedFunctionality == 'plan'
+                        ? Theme.of(context).secondaryHeaderColor
+                        : Colors.white.withOpacity(0.7),
+                  ),
+                ),
+              ],
             ),
-            iconSize: 38,
-            onPressed: () {
+          ),
+          GestureDetector(
+            onTap: () {
               showRecordingContainer();
             },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.notifications,
-              color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  TablerIcons.circle_dot,
+                  color: selectedFunctionality == 'record'
+                      ? Theme.of(context).secondaryHeaderColor
+                      : Colors.white.withOpacity(0.7),
+                  size: 28,
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'Record',
+                  style: TextStyle(
+                    color: selectedFunctionality == 'record'
+                        ? Theme.of(context).secondaryHeaderColor
+                        : Colors.white.withOpacity(0.7),
+                  ),
+                ),
+              ],
             ),
-            iconSize: 38,
-            onPressed: () {
-              // TODO: implement notifications
-              // this is temporary
+          ),
+          GestureDetector(
+            onTap: () {
               LogoutCommand().execute();
             },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  TablerIcons.logout,
+                  color: Colors.white.withOpacity(0.7),
+                  size: 28,
+                ),
+                SizedBox(height: 5),
+                Text(
+                  'Log out',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

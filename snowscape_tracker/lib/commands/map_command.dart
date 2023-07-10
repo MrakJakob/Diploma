@@ -4,6 +4,7 @@ import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:snowscape_tracker/data/planned_tour.dart';
+import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 
 class MapCommand extends BaseCommand {
@@ -35,7 +36,7 @@ class MapCommand extends BaseCommand {
 
     var color =
         type == 'recorded' // TODO: this is temporary, change in the future
-            ? '#86D7FB'
+            ? Color.fromARGB(255, 29, 212, 206).toHexStringRGB()
             : type == 'planned'
                 ? '#FF0000'
                 : '#000000';
@@ -62,20 +63,24 @@ class MapCommand extends BaseCommand {
   }
 
   void showRecordingContainer() {
+    mapModel.setSelectedFunctionality = "record";
     mapModel.tourPlanningContainerVisible = false;
     mapModel.recordingContainerVisible = true;
   }
 
   void hideRecordingContainer() {
+    mapModel.setSelectedFunctionality = "none";
     mapModel.recordingContainerVisible = false;
   }
 
   void showTourPlanningContainer() {
+    mapModel.setSelectedFunctionality = "plan";
     mapModel.recordingContainerVisible = false;
     mapModel.tourPlanningContainerVisible = true;
   }
 
   void hideTourPlanningContainer() {
+    mapModel.setSelectedFunctionality = "none";
     mapModel.tourPlanningContainerVisible = false;
   }
 
@@ -192,6 +197,91 @@ class MapCommand extends BaseCommand {
   Future<void> stopTourPlanning() async {
     await MapCommand().clearMap();
     MapCommand().hideTourPlanningContainer();
+  }
+
+  Future<void> showRecordedActivityMarker(
+      RecordedActivity recordedActivity) async {
+    if (mapModel.mapController == null) return;
+
+    await mapModel.mapController?.addSymbol(
+        SymbolOptions(
+          geometry: LatLng(
+            recordedActivity.points.first.latitude,
+            recordedActivity.points.first.longitude,
+          ),
+          iconOffset: const Offset(23, -35),
+          iconImage: 'assets/flag-3-filled.png',
+          iconSize: 0.3,
+        ),
+        {'recordedActivityId': recordedActivity.id});
+
+    mapModel.mapController?.onSymbolTapped.add((symbol) {
+      print('Symbol tapped: ${symbol.id}');
+      // remove for now, because it is not working properly
+      // MapCommand().showRecordedActivity(recordedActivity, true);
+    });
+  }
+
+  void showRecordedActivity(RecordedActivity recordedActivity, bool removeLayer,
+      BuildContext buildContext) async {
+    if (mapModel.mapController == null) return;
+
+    if (recordedActivity.points.isEmpty) return;
+
+    mapModel.mapController?.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: LatLng(
+          recordedActivity.points.first.latitude,
+          recordedActivity.points.first.longitude,
+        ),
+        zoom: 13.0,
+      ),
+    ));
+
+    if (removeLayer) {
+      await mapModel.mapController?.removeLayer('lines');
+      await mapModel.mapController?.removeSource('fills');
+    }
+    // addMarker(recordedActivity.points.first);
+
+    var geometry = {
+      "coordinates": recordedActivity.points
+          .map((e) => [e.longitude, e.latitude])
+          .toList(),
+      "type": "LineString"
+    };
+
+    final fills = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "id": "start",
+          "properties": <String, dynamic>{},
+          "geometry": geometry,
+        }
+      ]
+    };
+
+    await mapModel.mapController?.addSource(
+        "fills",
+        GeojsonSourceProperties(
+          data: fills,
+        ));
+    await mapModel.mapController?.addLayer(
+        'fills',
+        'lines',
+        LineLayerProperties(
+          lineColor:
+              Theme.of(buildContext).secondaryHeaderColor.toHexStringRGB(),
+          lineCap: "round",
+          lineJoin: "round",
+          lineWidth: 4.0,
+        ));
+  }
+
+  void setExplorePageSelectedItemIndex(int index) {
+    mapModel.setExplorePageSelectedItemIndex = index;
   }
 
   void resetController() {

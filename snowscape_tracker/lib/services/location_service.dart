@@ -52,8 +52,8 @@ class LocationService extends BaseCommand {
     });
   }
 
-  void setCurrentLocation() {
-    bg.BackgroundGeolocation.getCurrentPosition(
+  Future<void> setCurrentLocation() async {
+    await bg.BackgroundGeolocation.getCurrentPosition(
       persist: false, // <-- do not persist this location
       desiredAccuracy: 0, // <-- desire best possible accuracy
       timeout: 30000, // <-- wait 30s before giving up.

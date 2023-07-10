@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/data/planned_tour.dart';
 
@@ -52,10 +53,12 @@ class SavedPlannedToursPage extends StatelessWidget {
                                   topRight: Radius.circular(4),
                                 ),
                                 child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                  ),
-                                ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: const Image(
+                                      image: AssetImage("assets/mountain.png"),
+                                    )),
                               ),
                             ),
                             // text on top of image
@@ -107,8 +110,9 @@ class SavedPlannedToursPage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: const [
-                                    Icon(Icons.person),
+                                    Icon(TablerIcons.user_circle),
                                     SizedBox(width: 6),
                                     Text(
                                       "Jakob Mrak",

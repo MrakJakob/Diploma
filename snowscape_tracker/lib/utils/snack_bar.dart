@@ -7,13 +7,14 @@ class SnackBarWidget {
 
   static show(
     String? message,
+    MaterialColor? color,
   ) {
     if (message == null) return;
 
     final snackBar = SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 3),
-      backgroundColor: Colors.red,
+      backgroundColor: color ?? Colors.red,
     );
 
     messengerKey.currentState!

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:snowscape_tracker/commands/profile_command.dart';
 import 'package:snowscape_tracker/constants/format_date.dart';
 
@@ -44,10 +45,13 @@ class SavedRecordedActivitiesPage extends StatelessWidget {
                                 topLeft: Radius.circular(4),
                                 topRight: Radius.circular(4),
                               ),
-                              child: Image.network(
-                                // recordedActivity.data![index].imageUrl,
-                                "https://hvitserk.norrona.com/en/assets/image-cache/image-cache/drive/1dyojQW4YxvGi7eCYp2Hqgl-Yqz1FLpaZ.f7ed8c7a.774d88c4.jpg",
-                                fit: BoxFit.cover,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                ),
+                                child: const Image(
+                                  image: AssetImage("assets/mountain.png"),
+                                ),
                               ),
                             ),
                           ),
@@ -100,12 +104,13 @@ class SavedRecordedActivitiesPage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
-                                children: const [
-                                  Icon(Icons.person),
-                                  SizedBox(width: 6),
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  const Icon(TablerIcons.user_circle),
+                                  const SizedBox(width: 6),
                                   Text(
-                                    "Jakob Mrak",
-                                    style: TextStyle(
+                                    recordedActivity.data![index].userName,
+                                    style: const TextStyle(
                                       fontSize: 16,
                                     ),
                                   ),

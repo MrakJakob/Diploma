@@ -105,6 +105,7 @@ class TourPlanningContainer extends StatelessWidget {
                     children: [
                       Switch(
                         value: !drawStraightLine,
+                        activeColor: Theme.of(context).secondaryHeaderColor,
                         onChanged: (value) {
                           // when switch's value is true we call Mapbox directions API for route generation
                           // when switch's value is false we just draw a line between points (useful for offline use and when there is no mapped route between points)
@@ -205,8 +206,11 @@ class TourPlanningContainer extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        printDuration(Duration(
-                            seconds: duration != null ? duration.toInt() : 0)),
+                        printDuration(
+                            Duration(
+                                seconds:
+                                    duration != null ? duration.toInt() : 0),
+                            false),
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,

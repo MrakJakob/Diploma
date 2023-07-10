@@ -6,8 +6,10 @@ class CustomTheme {
     return ThemeData(
       // Define the default brightness and colors.
       brightness: Brightness.light,
-      primaryColor: Color(0xFF407076), // Color.fromARGB(255, 68, 116, 116),
+      primaryColor:
+          Color.fromARGB(255, 40, 40, 43), // Color.fromARGB(255, 68, 116, 116),
       scaffoldBackgroundColor: Colors.white,
+      secondaryHeaderColor: Color.fromARGB(255, 29, 212, 206),
 
       // Define the default font family.
       fontFamily: GoogleFonts.montserrat().fontFamily,

@@ -45,10 +45,12 @@ dependencies:
   maps_toolkit: ^2.0.1
   uuid: ^3.0.7
   sqflite: ^2.2.8+4
+  carousel_slider: ^4.2.1
+  flutter_tabler_icons: ^1.1.2
   
 
 flutter_native_splash:
-  color: "#094046"
+  color: "#1dd4ce"
   image: assets/mountain.png
 
 dev_dependencies:
@@ -67,12 +69,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/marker_icon.svg
-    - assets/maps-and-flags.png
     - assets/dot.png
     - assets/mountain.png
     - assets/rules.json
     - assets/areas.json
     - assets/warningAlert.png
+    - assets/pin.png
+    - assets/marker_red.png
+    - assets/flag-3-filled.png
     - .env
   # To add assets to your application, add an assets section, like this:
   # assets:

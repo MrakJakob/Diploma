@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/app_command.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
@@ -17,6 +18,10 @@ class MainAppContainerPage extends StatelessWidget {
 
     bool isTourPlanning = context.select<PlannedTourModel, bool>(
       (plannedTourModel) => plannedTourModel.isTourPlanning,
+    );
+
+    int selectedPageIndex = context.select<AppModel, int>(
+      (model) => model.selectedPageIndex,
     );
 
     void setSelectedPage(int pageIndex) {
@@ -48,39 +53,90 @@ class MainAppContainerPage extends StatelessWidget {
     return Scaffold(
       body: selectedPage,
       bottomNavigationBar: BottomAppBar(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.map),
-                onPressed: () {
-                  setSelectedPage(0);
-                },
-                iconSize: 38,
-                color: Colors.white,
+        height: 60,
+        color: Theme.of(context).primaryColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            GestureDetector(
+              onTap: () {
+                setSelectedPage(0);
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    TablerIcons.compass,
+                    size: 28,
+                    color: selectedPageIndex == 0
+                        ? Theme.of(context).secondaryHeaderColor
+                        : Colors.white.withOpacity(0.7),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Map',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: selectedPageIndex == 0
+                              ? Theme.of(context).secondaryHeaderColor
+                              : Colors.white.withOpacity(0.7),
+                        ),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {},
-                iconSize: 38,
-                color: Colors.white,
+            ),
+            GestureDetector(
+              onTap: () {
+                setSelectedPage(1);
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    TablerIcons.search,
+                    size: 28,
+                    color: selectedPageIndex == 1
+                        ? Theme.of(context).secondaryHeaderColor
+                        : Colors.white.withOpacity(0.7),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Explore',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: selectedPageIndex == 1
+                              ? Theme.of(context).secondaryHeaderColor
+                              : Colors.white.withOpacity(0.7),
+                        ),
+                  ),
+                ],
               ),
-              IconButton(
-                icon: const Icon(
-                  Icons.person,
-                ),
-                onPressed: () {
-                  setSelectedPage(1);
-                },
-                iconSize: 38,
-                color: Colors.white,
+            ),
+            GestureDetector(
+              onTap: () {
+                setSelectedPage(2);
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    TablerIcons.user_circle,
+                    size: 28,
+                    color: selectedPageIndex == 2
+                        ? Theme.of(context).secondaryHeaderColor
+                        : Colors.white.withOpacity(0.7),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    'Profile',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: selectedPageIndex == 2
+                              ? Theme.of(context).secondaryHeaderColor
+                              : Colors.white.withOpacity(0.7),
+                        ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
