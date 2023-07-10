@@ -365,4 +365,36 @@ class ArcGISService extends BaseCommand {
     }
     return 0;
   }
+
+  Future<double> getRecordedPathElevationAndRecalculateDistance(
+      List<LatLng> points) async {
+    if (points.isEmpty) {
+      return 0;
+    }
+    final response = await submitJobNew(points);
+    if (response != null &&
+        response.statusCode == 200 &&
+        response.data != null) {
+      var jobId = response.data['jobId'];
+      var status = await checkStatus(jobId);
+      if (status) {
+        List<ContextPoint>? contextPoints = await getResultsNew(jobId, points);
+
+        if (contextPoints == null || contextPoints.isEmpty) {
+          return 0;
+        }
+
+        // We need to recalculate distance because the distance and avg. speed calculated during recording is not accurate
+        recordActivityModel.setDistance = contextPoints.last.distanceFromStart;
+        recordActivityModel.setAverageSpeed = recordActivityModel.distance /
+            (recordActivityModel.getDuration / 3600);
+
+        double totalElevationGain =
+            GeoPropertiesCalculator().calculateElevationGain(contextPoints);
+
+        return totalElevationGain;
+      }
+    }
+    return 0;
+  }
 }

@@ -47,6 +47,7 @@ dependencies:
   sqflite: ^2.2.8+4
   carousel_slider: ^4.2.1
   flutter_tabler_icons: ^1.1.2
+  loader_overlay: ^2.2.0
   
 
 flutter_native_splash:
