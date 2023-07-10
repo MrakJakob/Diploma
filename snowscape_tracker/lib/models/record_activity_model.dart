@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:mapbox_gl/mapbox_gl.dart";
 import 'package:snowscape_tracker/data/recorded_activity.dart';
 import "package:snowscape_tracker/data/recording_status.dart";
+import "package:uuid/uuid.dart";
 
 class RecordActivityModel extends ChangeNotifier {
   // bool _isRecording = false;
@@ -28,7 +29,9 @@ class RecordActivityModel extends ChangeNotifier {
   get getRecordingStatus => _recordingStatus;
 
   void createRecordedActivity() {
-    _recordedActivity = RecordedActivity(startTime: DateTime.now());
+    var uuid = const Uuid();
+    _recordedActivity =
+        RecordedActivity(startTime: DateTime.now(), id: uuid.v4());
   }
 
   void endRecordedActivity() {
@@ -97,6 +100,7 @@ class RecordActivityModel extends ChangeNotifier {
   }
 
   set incrementDuration(int durationSeconds) {
+    debugPrint("incrementDuration: $durationSeconds");
     _recordedActivity?.duration += durationSeconds;
     notifyListeners();
   }
@@ -123,4 +127,11 @@ class RecordActivityModel extends ChangeNotifier {
     recordedActivity?.tourName = name;
     notifyListeners();
   }
+
+  set isPublic(bool isPublic) {
+    recordedActivity?.isPublic = isPublic;
+    notifyListeners();
+  }
+
+  get getIsPublic => recordedActivity?.isPublic ?? false;
 }

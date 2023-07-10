@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:snowscape_tracker/views/explore_page.dart';
 import 'package:snowscape_tracker/views/map_page.dart';
 import 'package:snowscape_tracker/views/profile_page.dart';
 
@@ -7,8 +8,9 @@ class AppModel extends ChangeNotifier {
   String _currentUser = "";
   bool _isLogin = true;
   final _formKey = GlobalKey<FormState>();
-  final _pages = [const MapPage(), ProfilePage()];
+  final _pages = [const MapPage(), ExplorePage(), const ProfilePage()];
   Widget _selectedPage = const MapPage();
+  int _selectedPageIndex = 0;
 
   String get currentUser => _currentUser;
   bool get isLogin => _isLogin;
@@ -25,9 +27,12 @@ class AppModel extends ChangeNotifier {
   }
 
   set setSelectedPage(int pageIndex) {
+    _selectedPageIndex = pageIndex;
     _selectedPage = _pages[pageIndex];
     notifyListeners();
   }
 
   get selectedPage => _selectedPage;
+
+  get selectedPageIndex => _selectedPageIndex;
 }

@@ -4,6 +4,7 @@ import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:snowscape_tracker/data/recording_status.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 import 'dart:math' show cos, sqrt, asin;
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 
@@ -49,11 +50,8 @@ class RecordActivityCommand extends BaseCommand {
     recordActivityModel.tourName =
         recordActivityModel.tourNameController.text ?? "Tour";
     recordActivityModel.description =
-        recordActivityModel.tourDescriptionController.text ?? "Description";
-    if (recordActivityModel.getDifficulty == 0) {
-      // if the user has not selected a difficulty, we set it to average (3)
-      recordActivityModel.difficulty = 3;
-    }
+        recordActivityModel.tourDescriptionController.text ?? "No description";
+
     bool succes = await recordedActivityService
         .saveRecordedActivity(recordActivityModel.recordedActivity);
 
@@ -62,6 +60,7 @@ class RecordActivityCommand extends BaseCommand {
       UserPreferences.setRecording(RecordingStatus.idle);
       mapModel.recordingContainerVisible = false;
       recordActivityModel.setRecordedActivity = null;
+      SnackBarWidget.show('Activity saved successfully', Colors.green);
     }
 
     return succes;
@@ -181,5 +180,9 @@ class RecordActivityCommand extends BaseCommand {
 
   void setDifficulty(int difficulty) {
     recordActivityModel.difficulty = difficulty;
+  }
+
+  void setIsPublic(bool isPublic) {
+    recordActivityModel.isPublic = isPublic;
   }
 }

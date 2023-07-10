@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
+import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/helpers/alert_dialog.dart';
+import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class SaveRecordedActivityPage extends StatefulWidget {
@@ -18,6 +21,9 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isPublic = context.select<RecordActivityModel, bool>(
+        (recordActivityModel) => recordActivityModel.getIsPublic);
+
     void saveTour() async {
       // we save the tour and then pop the save recorded activity page
       RecordActivityCommand().saveRecordedActivity().then((success) async {
@@ -162,7 +168,7 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
                           itemPadding:
                               const EdgeInsets.symmetric(horizontal: 4.0),
                           itemBuilder: (context, _) => const Icon(
-                            Icons.star,
+                            TablerIcons.star,
                             color: Colors.amber,
                           ),
                           onRatingUpdate: (difficulty) {
@@ -174,6 +180,43 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Flexible(
+                    flex: 1,
+                    fit: FlexFit.loose,
+                    child: IntrinsicHeight(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Share tour with other users?",
+                            style: Theme.of(context).textTheme.bodyLarge!),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Switch(
+                                value: isPublic,
+                                onChanged: (value) {
+                                  RecordActivityCommand().setIsPublic(value);
+                                }),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Flexible(
+                              child: Text(
+                                  isPublic
+                                      ? "Yes, I would like to\nshare my tour"
+                                      : "No, I would like to\nkeep my tour private",
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                  overflow: TextOverflow.ellipsis),
+                            )
+                          ],
+                        )
+                      ],
+                    ))),
                 const SizedBox(
                   height: 30,
                 ),

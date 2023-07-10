@@ -53,7 +53,7 @@ class ProfilePage extends StatelessWidget {
                           border: Border(
                             bottom: BorderSide(
                               width: 1.5,
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).secondaryHeaderColor,
                             ),
                           ),
                         )
@@ -80,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                           border: Border(
                             bottom: BorderSide(
                               width: 1.5,
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).secondaryHeaderColor,
                             ),
                           ),
                         )

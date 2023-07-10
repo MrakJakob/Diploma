@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
 import 'package:snowscape_tracker/commands/location_command.dart';
@@ -225,6 +226,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 60.0,
         flexibleSpace: CustomAppBar(),
         backgroundColor: Theme.of(context).primaryColor,
       ),
@@ -267,8 +269,15 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                   onPressed: () {
                     handleOnCurrentLocationPressed();
                   },
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child: const Icon(Icons.my_location_rounded),
+                  backgroundColor: Theme.of(context).secondaryHeaderColor,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 5),
+                    child: Icon(
+                      TablerIcons.current_location,
+                      color: Theme.of(context).primaryColor,
+                      size: 30,
+                    ),
+                  ),
                 )
               : null,
     );

@@ -156,20 +156,29 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Time',
-                      style: Theme.of(context).textTheme.bodySmall,
-                      textAlign: TextAlign.center,
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.loose,
+                      child: Text(
+                        'Time',
+                        style: Theme.of(context).textTheme.bodySmall,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      printDuration(Duration(seconds: duration)),
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                      textAlign: TextAlign.center,
+                    Flexible(
+                      flex: 2,
+                      fit: FlexFit.loose,
+                      child: Text(
+                        printDuration(Duration(seconds: duration), false),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),
@@ -196,23 +205,31 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Distance (km)',
-                            style: Theme.of(context).textTheme.bodySmall,
-                            textAlign: TextAlign.center,
+                          Flexible(
+                            flex: 1,
+                            fit: FlexFit.loose,
+                            child: Text(
+                              'Distance (km)',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            distance.toStringAsFixed(2),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            textAlign: TextAlign.center,
+                          Flexible(
+                            flex: 2,
+                            fit: FlexFit.loose,
+                            child: Text(
+                              distance.toStringAsFixed(2),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),
@@ -228,23 +245,31 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'AVG Speed (km/h)',
-                            style: Theme.of(context).textTheme.bodySmall,
-                            textAlign: TextAlign.center,
+                          Flexible(
+                            flex: 1,
+                            fit: FlexFit.loose,
+                            child: Text(
+                              'AVG Speed (km/h)',
+                              style: Theme.of(context).textTheme.bodySmall,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            averageSpeed.toStringAsFixed(2),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            textAlign: TextAlign.center,
+                          Flexible(
+                            flex: 2,
+                            fit: FlexFit.loose,
+                            child: Text(
+                              averageSpeed.toStringAsFixed(2),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),
@@ -267,63 +292,76 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 recordingStatus != RecordingStatus.recording
-                    ? GestureDetector(
-                        onTap: () {
-                          handleResumeCancelClick();
-                        },
-                        child: Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(context).primaryColor,
-                              width: 2,
+                    ? Flexible(
+                        flex: 1,
+                        fit: FlexFit.loose,
+                        child: GestureDetector(
+                          onTap: () {
+                            handleResumeCancelClick();
+                          },
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(50),
                             ),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            recordingStatus == RecordingStatus.idle
-                                ? "Cancel"
-                                : "Resume",
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor,
-                                ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              recordingStatus == RecordingStatus.idle
+                                  ? "Cancel"
+                                  : "Resume",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                            ),
                           ),
                         ),
                       )
                     : Container(),
                 recordingStatus != RecordingStatus.recording
-                    ? const SizedBox(
-                        width: 20,
+                    ? const Flexible(
+                        flex: 1,
+                        fit: FlexFit.loose,
+                        child: SizedBox(
+                          width: 20,
+                        ),
                       )
                     : Container(),
-                GestureDetector(
-                  onTap: () {
-                    handleRecordingClick();
-                  },
-                  child: Container(
-                    width: 70,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      recordingStatus == RecordingStatus.idle
-                          ? "Start"
-                          : recordingStatus == RecordingStatus.recording
-                              ? "Stop"
-                              : "Finish",
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.loose,
+                  child: GestureDetector(
+                    onTap: () {
+                      handleRecordingClick();
+                    },
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        recordingStatus == RecordingStatus.idle
+                            ? "Start"
+                            : recordingStatus == RecordingStatus.recording
+                                ? "Stop"
+                                : "Finish",
+                        style:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                      ),
                     ),
                   ),
                 )

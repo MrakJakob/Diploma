@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 class RecordedActivity {
-  final String? id;
+  String? id;
   DateTime startTime;
   late List<LatLng> points;
   late DateTime? endTime;
@@ -11,7 +11,10 @@ class RecordedActivity {
   int duration = 0;
   String tourName = "";
   String tourDescription = "";
-  int difficulty = 0;
+  int difficulty = 3;
+  bool isPublic = false;
+  String userId = "";
+  String userName = "Anonymous user";
 
   RecordedActivity({
     this.id,
@@ -27,6 +30,7 @@ class RecordedActivity {
         .toList();
 
     return {
+      'id': id,
       'startTime': startTime,
       'points': geoPoints,
       'endTime': endTime,
@@ -36,6 +40,9 @@ class RecordedActivity {
       'tourName': tourName,
       'tourDescription': tourDescription,
       'difficulty': difficulty,
+      'isPublic': isPublic,
+      'userId': userId,
+      'userName': userName,
     };
   }
 
@@ -45,6 +52,10 @@ class RecordedActivity {
       RecordedActivity recordedActivity = RecordedActivity(
         startTime: data['startTime'].toDate(),
       );
+
+      if (data['id'] != null) {
+        recordedActivity.id = data['id'];
+      }
 
       if (data['points'] != null) {
         List<LatLng> points = data['points'].map<LatLng>((point) {
@@ -80,6 +91,18 @@ class RecordedActivity {
 
       if (data['difficulty'] != null) {
         recordedActivity.difficulty = data['difficulty'];
+      }
+
+      if (data['isPublic'] != null) {
+        recordedActivity.isPublic = data['isPublic'];
+      }
+
+      if (data['userId'] != null) {
+        recordedActivity.userId = data['userId'];
+      }
+
+      if (data['userName'] != null) {
+        recordedActivity.userName = data['userName'];
       }
 
       return recordedActivity;
