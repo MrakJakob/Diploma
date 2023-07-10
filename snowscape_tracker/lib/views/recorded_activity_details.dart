@@ -79,6 +79,7 @@ class _RecordedActivityDetailsState extends State<RecordedActivityDetails> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
                   const Center(
                     child: Image(
                       image: AssetImage("assets/mountain.png"),
@@ -86,6 +87,7 @@ class _RecordedActivityDetailsState extends State<RecordedActivityDetails> {
                       height: 140,
                     ),
                   ),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -121,7 +123,7 @@ class _RecordedActivityDetailsState extends State<RecordedActivityDetails> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "1200 m",
+                            "${widget.recordedActivity.elevationGain.toStringAsFixed(0)} m",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ],

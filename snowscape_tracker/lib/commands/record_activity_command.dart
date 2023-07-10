@@ -46,7 +46,11 @@ class RecordActivityCommand extends BaseCommand {
 
   Future<bool> saveRecordedActivity() async {
     // save the recorded activity to firestore
+    double elevationGain = await arcGISService
+        .getRecordedPathElevationAndRecalculateDistance(recordActivityModel
+            .points); // calculate the elevation gain of the activity
     recordActivityModel.endRecordedActivity();
+    recordActivityModel.elevationGain = elevationGain;
     recordActivityModel.tourName =
         recordActivityModel.tourNameController.text ?? "Tour";
     recordActivityModel.description =

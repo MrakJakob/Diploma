@@ -134,4 +134,11 @@ class RecordActivityModel extends ChangeNotifier {
   }
 
   get getIsPublic => recordedActivity?.isPublic ?? false;
+
+  set elevationGain(double elevationGain) {
+    recordedActivity?.elevationGain = elevationGain;
+    notifyListeners();
+  }
+
+  get getElevationGain => recordedActivity?.elevationGain ?? 0.0;
 }

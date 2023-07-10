@@ -15,6 +15,7 @@ class RecordedActivity {
   bool isPublic = false;
   String userId = "";
   String userName = "Anonymous user";
+  double elevationGain = 0.0;
 
   RecordedActivity({
     this.id,
@@ -43,6 +44,7 @@ class RecordedActivity {
       'isPublic': isPublic,
       'userId': userId,
       'userName': userName,
+      'elevationGain': elevationGain,
     };
   }
 
@@ -103,6 +105,10 @@ class RecordedActivity {
 
       if (data['userName'] != null) {
         recordedActivity.userName = data['userName'];
+      }
+
+      if (data['elevationGain'] != null) {
+        recordedActivity.elevationGain = data['elevationGain'];
       }
 
       return recordedActivity;

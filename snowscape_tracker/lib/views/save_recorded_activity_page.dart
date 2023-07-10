@@ -7,6 +7,7 @@ import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/helpers/alert_dialog.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class SaveRecordedActivityPage extends StatefulWidget {
   const SaveRecordedActivityPage({Key? key}) : super(key: key);
@@ -26,7 +27,9 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
 
     void saveTour() async {
       // we save the tour and then pop the save recorded activity page
+      context.loaderOverlay.show();
       RecordActivityCommand().saveRecordedActivity().then((success) async {
+        context.loaderOverlay.hide();
         Navigator.of(context).pop();
         if (success) {
           // we clear the aaa
@@ -39,10 +42,12 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
 
     void discardTour() async {
       // we clear the map
-      RecordActivityCommand().endRecordedActivity();
+      context.loaderOverlay.show();
+      await RecordActivityCommand().endRecordedActivity();
       await MapCommand().clearMap();
       // and clear the recorded activity from the shared preferences
       UserPreferences.clearRecordedActivity();
+      context.loaderOverlay.hide();
       // and pop the save recorded activity page
       Navigator.of(context).pop();
       Navigator.of(context).pop();
@@ -52,226 +57,231 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
       Navigator.of(context).pop();
     }
 
-    return Scaffold(
-        appBar: AppBar(
-          flexibleSpace: SafeArea(
-            child: Center(
-              child: Text(
-                'Save Tour',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Colors.white,
-                    ),
+    return LoaderOverlay(
+      child: Scaffold(
+          appBar: AppBar(
+            flexibleSpace: SafeArea(
+              child: Center(
+                child: Text(
+                  'Save Tour',
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Colors.white,
+                      ),
+                ),
               ),
             ),
+            backgroundColor: Theme.of(context).primaryColor,
           ),
-          backgroundColor: Theme.of(context).primaryColor,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              // mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Flexible(
-                  fit: FlexFit.loose,
-                  flex: 1,
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Tour Name',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextField(
-                          controller:
-                              RecordActivityCommand().tourNameController(),
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 0,
-                                color: Color.fromARGB(25, 0, 0, 0),
+          body: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Flexible(
+                    fit: FlexFit.loose,
+                    flex: 1,
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Tour Name',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextField(
+                            controller:
+                                RecordActivityCommand().tourNameController(),
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  width: 0,
+                                  color: Color.fromARGB(25, 0, 0, 0),
+                                ),
                               ),
+                              labelText: 'Enter a name for your tour',
+                              contentPadding: EdgeInsets.all(10.0),
                             ),
-                            labelText: 'Enter a name for your tour',
-                            contentPadding: EdgeInsets.all(10.0),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            textInputAction: TextInputAction.next,
                           ),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                          textInputAction: TextInputAction.next,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.loose,
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Description',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        TextFormField(
-                          controller: RecordActivityCommand()
-                              .tourDescriptionController(),
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Enter a description for your tour',
-                            contentPadding: EdgeInsets.all(10.0),
-                          ),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ],
-                    ),
+                  const SizedBox(
+                    height: 30,
                   ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.loose,
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Tour Difficulty',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        RatingBar.builder(
-                          initialRating: 3,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: false,
-                          itemCount: 5,
-                          itemPadding:
-                              const EdgeInsets.symmetric(horizontal: 4.0),
-                          itemBuilder: (context, _) => const Icon(
-                            TablerIcons.star,
-                            color: Colors.amber,
-                          ),
-                          onRatingUpdate: (difficulty) {
-                            RecordActivityCommand()
-                                .setDifficulty(difficulty.toInt());
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Flexible(
+                  Flexible(
                     flex: 1,
                     fit: FlexFit.loose,
                     child: IntrinsicHeight(
-                        child: Column(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Description',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          TextFormField(
+                            controller: RecordActivityCommand()
+                                .tourDescriptionController(),
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Enter a description for your tour',
+                              contentPadding: EdgeInsets.all(10.0),
+                            ),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.loose,
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Tour Difficulty',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          RatingBar.builder(
+                            initialRating: 3,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: false,
+                            itemCount: 5,
+                            itemPadding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            itemBuilder: (context, _) => const Icon(
+                              TablerIcons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: (difficulty) {
+                              RecordActivityCommand()
+                                  .setDifficulty(difficulty.toInt());
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Flexible(
+                      flex: 1,
+                      fit: FlexFit.loose,
+                      child: IntrinsicHeight(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Share tour with other users?",
+                              style: Theme.of(context).textTheme.bodyLarge!),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              Switch(
+                                  value: isPublic,
+                                  onChanged: (value) {
+                                    RecordActivityCommand().setIsPublic(value);
+                                  }),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Flexible(
+                                child: Text(
+                                    isPublic
+                                        ? "Yes, I would like to\nshare my tour"
+                                        : "No, I would like to\nkeep my tour private",
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                    overflow: TextOverflow.ellipsis),
+                              )
+                            ],
+                          )
+                        ],
+                      ))),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.loose,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Share tour with other users?",
-                            style: Theme.of(context).textTheme.bodyLarge!),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Switch(
-                                value: isPublic,
-                                onChanged: (value) {
-                                  RecordActivityCommand().setIsPublic(value);
-                                }),
-                            const SizedBox(
-                              width: 10,
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showAlertDialog(
+                                  context,
+                                  "Discard recorded tour",
+                                  "Are you sure you want to discard this recorded tour?",
+                                  discardTour,
+                                  cancel);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                side: BorderSide(
+                                    width: 2.0,
+                                    color: Theme.of(context).primaryColor)),
+                            child: Text(
+                              'Cancel',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
-                            Flexible(
-                              child: Text(
-                                  isPublic
-                                      ? "Yes, I would like to\nshare my tour"
-                                      : "No, I would like to\nkeep my tour private",
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                  overflow: TextOverflow.ellipsis),
-                            )
-                          ],
-                        )
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 30,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              saveTour();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(context).primaryColor,
+                            ),
+                            child: const Text('Save'),
+                          ),
+                        ),
                       ],
-                    ))),
-                const SizedBox(
-                  height: 30,
-                ),
-                Flexible(
-                  flex: 1,
-                  fit: FlexFit.loose,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            showAlertDialog(
-                                context,
-                                "Discard recorded tour",
-                                "Are you sure you want to discard this recorded tour?",
-                                discardTour,
-                                cancel);
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: BorderSide(
-                                  width: 2.0,
-                                  color: Theme.of(context).primaryColor)),
-                          child: Text(
-                            'Cancel',
-                            style:
-                                Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                      color: Theme.of(context).primaryColor,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 30,
-                      ),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            saveTour();
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).primaryColor,
-                          ),
-                          child: const Text('Save'),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 }
