@@ -164,11 +164,11 @@ class PlannedTourCommand extends BaseCommand {
     //     await arcGISService.getElevationGain(plannedTourModel.route);
     // int totalElevation =
     //     await mapBoxService.getElevationGain(plannedTourModel.route);
+    // we have to make a copy of the route, because the route is a reference to the route in the model
+    List<LatLng> route = [...plannedTourModel.route];
 
-    double totalElevation =
-        await arcGISService.getPathElevation(plannedTourModel.route);
+    await arcGISService.getPathElevation(route);
 
-    plannedTourModel.setTotalElevationGain = totalElevation;
     plannedTourModel.setLoadingPathData = false;
 
     List<MatchedRule> matchedRules =
