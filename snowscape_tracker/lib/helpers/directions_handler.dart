@@ -11,6 +11,9 @@ Future<MapboxDirectionsResponse> directionsApiResponseModified(
   if (response == null) {
     debugPrint("Response is null");
     return MapboxDirectionsResponse();
+  } else if (response['routes'].isEmpty) {
+    debugPrint("Response is empty");
+    return MapboxDirectionsResponse();
   }
 
   List<LatLng> route = response['routes'][0]['geometry']['coordinates']

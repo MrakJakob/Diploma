@@ -324,8 +324,8 @@ class ArcGISService extends BaseCommand {
         debugPrint("Response: ${response.data}");
         for (var i = 0; i < path.length; i++) {
           var point = path[i];
-          var contextPoint = ContextPoint(
-              LatLng(point[1], point[0]), point[2], 0, 0, point[3].toDouble());
+          var contextPoint = ContextPoint(LatLng(point[1], point[0]),
+              point[2].toDouble(), 0, 0, point[3].toDouble());
           contextPoints.add(contextPoint);
         }
       }
@@ -342,59 +342,87 @@ class ArcGISService extends BaseCommand {
     return contextPoints;
   }
 
-  Future<double> getPathElevation(List<LatLng> path) async {
-    final response = await submitJobNew(path);
-    if (response != null &&
-        response.statusCode == 200 &&
-        response.data != null) {
-      var jobId = response.data['jobId'];
-      var status = await checkStatus(jobId);
-      if (status) {
-        List<ContextPoint>? contextPoints = await getResultsNew(jobId, path);
-
-        if (contextPoints == null || contextPoints.isEmpty) {
-          return 0;
-        }
-        plannedTourModel.setContextPoints = contextPoints;
-
-        double totalElevationGain =
-            GeoPropertiesCalculator().calculateElevationGain(contextPoints);
-
-        return totalElevationGain;
-      }
+  Future<void> getPathElevation(List<LatLng> path) async {
+    if (path.isEmpty) {
+      return;
     }
-    return 0;
+
+    List<LatLng> newRoute = path;
+
+    while (newRoute.isNotEmpty) {
+      List<LatLng> newRoute = path.length > 410 ? path.sublist(0, 410) : path;
+      final response = await submitJobNew(newRoute);
+      if (response != null &&
+          response.statusCode == 200 &&
+          response.data != null) {
+        var jobId = response.data['jobId'];
+        var status = await checkStatus(jobId);
+        if (status) {
+          List<ContextPoint>? contextPoints =
+              await getResultsNew(jobId, newRoute);
+
+          if (contextPoints == null || contextPoints.isEmpty) {
+            return;
+          }
+          plannedTourModel.setContextPoints = [
+            ...plannedTourModel.contextPoints,
+            ...contextPoints
+          ];
+
+          double totalElevationGain =
+              GeoPropertiesCalculator().calculateElevationGain(contextPoints);
+
+          // we have to add the elevation gain to the total elevation gain of the tour in case we have more than 1000 points
+          plannedTourModel.setTotalElevationGain =
+              plannedTourModel.totalElevationGain + totalElevationGain;
+        }
+      }
+      path.removeRange(0, newRoute.length);
+    }
   }
 
-  Future<double> getRecordedPathElevationAndRecalculateDistance(
+  Future<void> getRecordedPathElevationAndRecalculateDistance(
       List<LatLng> points) async {
     if (points.isEmpty) {
-      return 0;
+      return;
     }
-    final response = await submitJobNew(points);
-    if (response != null &&
-        response.statusCode == 200 &&
-        response.data != null) {
-      var jobId = response.data['jobId'];
-      var status = await checkStatus(jobId);
-      if (status) {
-        List<ContextPoint>? contextPoints = await getResultsNew(jobId, points);
 
-        if (contextPoints == null || contextPoints.isEmpty) {
-          return 0;
+    List<LatLng> newPoints = points;
+
+    while (newPoints.isNotEmpty) {
+      // if we have more than 1000 points, we need to split them into multiple requests, because the API can only handle 1000 points at a time
+      newPoints = points.length > 1000 ? points.sublist(0, 1000) : points;
+
+      final response = await submitJobNew(newPoints);
+      if (response != null &&
+          response.statusCode == 200 &&
+          response.data != null) {
+        var jobId = response.data['jobId'];
+        var status = await checkStatus(jobId);
+        if (status) {
+          List<ContextPoint>? contextPoints =
+              await getResultsNew(jobId, newPoints);
+
+          if (contextPoints == null || contextPoints.isEmpty) {
+            return;
+          }
+
+          // We need to recalculate distance because the distance and avg. speed calculated during recording is not accurate
+          recordActivityModel.setDistance =
+              contextPoints.last.distanceFromStart;
+          recordActivityModel.setAverageSpeed = recordActivityModel.distance /
+              (recordActivityModel.getDuration / 3600);
+
+          double totalElevationGain =
+              GeoPropertiesCalculator().calculateElevationGain(contextPoints);
+
+          // we need to add the elevation gain to the total elevation gain in case we have more than 1000 points
+          recordActivityModel.elevationGain =
+              recordActivityModel.getElevationGain + totalElevationGain;
         }
-
-        // We need to recalculate distance because the distance and avg. speed calculated during recording is not accurate
-        recordActivityModel.setDistance = contextPoints.last.distanceFromStart;
-        recordActivityModel.setAverageSpeed = recordActivityModel.distance /
-            (recordActivityModel.getDuration / 3600);
-
-        double totalElevationGain =
-            GeoPropertiesCalculator().calculateElevationGain(contextPoints);
-
-        return totalElevationGain;
       }
+      // remove the points that were already processed
+      points.removeRange(0, newPoints.length);
     }
-    return 0;
   }
 }
