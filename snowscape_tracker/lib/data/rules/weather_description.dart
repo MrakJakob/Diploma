@@ -1,6 +1,6 @@
 class WeatherDescription {
   // @PrimaryKey(autoGenerate = true)
-  final int weatherDescriptionId;
+  final String weatherDescriptionId;
   final int ruleId;
   final int dayDelay;
   final int? tempAvgMin;
@@ -61,7 +61,7 @@ class WeatherDescription {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS weather_description_rule (
-      weatherDescriptionId INTEGER PRIMARY KEY AUTOINCREMENT,
+      weatherDescriptionId TEXT PRIMARY KEY,
       ruleId INTEGER NOT NULL,
       dayDelay INTEGER NOT NULL,
       tempAvgMin INTEGER,

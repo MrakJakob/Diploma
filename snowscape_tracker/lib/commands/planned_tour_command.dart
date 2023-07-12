@@ -97,6 +97,14 @@ class PlannedTourCommand extends BaseCommand {
     plannedTourModel.setDistance = distance;
   }
 
+  void setPlannedTourTime(DateTime date) {
+    plannedTourModel.setPlannedTourTime = date;
+  }
+
+  DateTime getPlannedTourTime() {
+    return plannedTourModel.plannedTourTime;
+  }
+
   Future<bool> undo() async {
     if (plannedTourModel.markers == null || plannedTourModel.markers.isEmpty) {
       return true;
@@ -159,6 +167,7 @@ class PlannedTourCommand extends BaseCommand {
   }
 
   generateRoute() async {
+    plannedTourModel.setTotalElevationGain = 0;
     plannedTourModel.setLoadingPathData = true;
     // int totalElevation =
     //     await arcGISService.getElevationGain(plannedTourModel.route);
@@ -171,8 +180,10 @@ class PlannedTourCommand extends BaseCommand {
 
     plannedTourModel.setLoadingPathData = false;
 
-    List<MatchedRule> matchedRules =
-        await matchRules(plannedTourModel.contextPoints, "planned_tour");
+    List<MatchedRule> matchedRules = await matchRules(
+        plannedTourModel.contextPoints,
+        "planned_tour",
+        plannedTourModel.plannedTourTime);
 
     debugPrint("matched rules: $matchedRules");
 
@@ -219,6 +230,7 @@ class PlannedTourCommand extends BaseCommand {
       distance: plannedTour.distance,
       duration: plannedTour.duration,
       totalElevationGain: plannedTour.totalElevationGain,
+      plannedTourTime: plannedTour.plannedTourTime,
     );
     List<Marker> markers = plannedTour.markers;
     List<LatLng> route = plannedTour.route;
@@ -304,7 +316,7 @@ class PlannedTourCommand extends BaseCommand {
       plannedTour.distance = plannedTourDb.distance;
       plannedTour.duration = plannedTourDb.duration;
       plannedTour.totalElevationGain = plannedTourDb.totalElevationGain;
-
+      plannedTour.plannedTourTime = plannedTourDb.plannedTourTime;
       plannedTour.markers = markersList
           .where((marker) => marker.plannedTourId == plannedTourDb.id)
           .toList();
@@ -337,6 +349,7 @@ class PlannedTourCommand extends BaseCommand {
     plannedTourModel.setRoute = plannedTour.route;
     plannedTourModel.setMatchedRules = plannedTour.matchedRules ?? [];
     plannedTourModel.setLoadingPathData = false;
+    plannedTourModel.setPlannedTourTime = plannedTour.plannedTourTime;
     MapCommand().showTourPlanningContainer();
   }
 }

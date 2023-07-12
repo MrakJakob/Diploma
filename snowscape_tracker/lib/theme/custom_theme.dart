@@ -8,9 +8,10 @@ class CustomTheme {
       brightness: Brightness.light,
       primaryColor:
           Color.fromARGB(255, 40, 40, 43), // Color.fromARGB(255, 68, 116, 116),
+      primaryColorLight: Color.fromARGB(20, 40, 40, 43),
       scaffoldBackgroundColor: Colors.white,
       secondaryHeaderColor: Color.fromARGB(255, 29, 212, 206),
-
+      splashColor: Color.fromARGB(255, 29, 212, 206),
       // Define the default font family.
       fontFamily: GoogleFonts.montserrat().fontFamily,
 

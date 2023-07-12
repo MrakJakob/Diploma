@@ -151,7 +151,7 @@ Future<List<RuleWithLists>> rules(Database db) async {
 }
 
 Future<List<MatchedRule>> matchRules(
-    List<ContextPoint> path, String text) async {
+    List<ContextPoint> path, String text, DateTime plannedTourTime) async {
   List<MatchedRule> matchedRules = [];
 
   if (path.length < 2) {
@@ -243,31 +243,37 @@ Future<List<MatchedRule>> matchRules(
       // Check the weather rules
       for (WeatherDescription weatherDescription in rule.weatherDescriptions) {
         DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
-        var time = DateTime.now();
-        // DateTime date1 = DateTime(
-        //     time.year,
-        //     time.month,
-        //     time.day + weatherDescription.dayDelay,
-        //     weatherDescription.hourMin ?? 0,
-        //     0,
-        //     0,
-        //     0,
-        //     0);
 
-        // DateTime date2 = DateTime(
-        //     time.year,
-        //     time.month,
-        //     time.day + weatherDescription.dayDelay,
-        //     weatherDescription.hourMax ?? 0,
-        //     0,
-        //     0,
-        //     0,
-        //     0);
-        DateTime date1 =
-            DateTime(2023, 6, 16, weatherDescription.hourMin ?? 0, 0, 0, 0, 0);
+        if (plannedTourTime.hour < weatherDescription.hourMin! ||
+            plannedTourTime.hour > weatherDescription.hourMax!) {
+          // if the planned tour time is not in the range of the weather description, we don't have to check the weather
+          if (weatherDescription == rule.weatherDescriptions.last) {
+            // if none of the weather descriptions match the hours, then the rule doesn't match
+            isMatched = false;
+          }
 
-        DateTime date2 =
-            DateTime(2023, 6, 16, weatherDescription.hourMax ?? 0, 0, 0, 0, 0);
+          continue;
+        }
+
+        DateTime date1 = DateTime(
+            plannedTourTime.year,
+            plannedTourTime.month,
+            plannedTourTime.day + weatherDescription.dayDelay,
+            weatherDescription.hourMin ?? 0,
+            0,
+            0,
+            0,
+            0);
+
+        DateTime date2 = DateTime(
+            plannedTourTime.year,
+            plannedTourTime.month,
+            plannedTourTime.day + weatherDescription.dayDelay,
+            weatherDescription.hourMax ?? 0,
+            0,
+            0,
+            0,
+            0);
 
         List<WeatherHour> weatherHours = await weatherHoursForAvalancheArea(
             areaId,
@@ -340,7 +346,7 @@ Future<List<MatchedRule>> matchRules(
       }
       // check the avalanche pattern rules
       for (PatternRule patternRule in rule.patternRules) {
-        // Not in use yet
+        // Not in use yet !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // we currently have no pattern rules in the database
         DateTime date1 =
             DateTime(2023, 6, 16, patternRule.hourMin ?? 0, 0, 0, 0, 0);
@@ -358,16 +364,23 @@ Future<List<MatchedRule>> matchRules(
         //         date1.millisecondsSinceEpoch, date2.millisecondsSinceEpoch);
       }
 
-      // check for danger rules
+      // check for danger rules!!!!!!!!!!!!!!!!!!!!!!!!!!!
       // we currently have no danger rules in the database
 
       // check for problem rules
       for (ProblemRule problemRule in rule.problemRules) {
-        DateTime date1 =
-            DateTime(2023, 6, 16, problemRule.hourMin ?? 0, 0, 0, 0, 0);
+        DateTime date1 = DateTime(
+            // actual date and time of the tour
+            plannedTourTime.year,
+            plannedTourTime.month,
+            plannedTourTime.day + (problemRule.dayDelay ?? 0),
+            plannedTourTime.hour + 0,
+            0,
+            0,
+            0,
+            0);
 
-        DateTime date2 =
-            DateTime(2023, 6, 16, problemRule.hourMax ?? 0, 0, 0, 0, 0);
+        // TODO: for demonstration purposes, we are using the date of the last avalanche bulletin 8.5.2023
 
         AvalancheBulletin? bulletin = await getAvalancheBulletin(
           database,
@@ -381,8 +394,13 @@ Future<List<MatchedRule>> matchRules(
             problemRule.problemType,
             approximateRoute[i],
             database,
+            date1,
           );
-          debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
+          if (problemsForAvalancheArea.isNotEmpty) {
+            debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
+          }
+
+          // debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
           for (ProblemBulletin problemBulletin in problemsForAvalancheArea) {
             debugPrint('problemBulletin: ${problemBulletin}');
           }
@@ -399,7 +417,7 @@ Future<List<MatchedRule>> matchRules(
         MatchedRule matchedRule = MatchedRule(
           ruleId: rule.rule.ruleId,
           id: i.toString(),
-          date: DateTime.now(),
+          date: plannedTourTime,
           read: false,
           name: rule.rule.notificationName ?? '',
           text: rule.rule.notificationText ?? '',
@@ -423,15 +441,27 @@ Future<List<ProblemBulletin>> getProblemsForAvalancheArea(
   int? problemType,
   ContextPoint point,
   Database db,
+  DateTime date1,
 ) async {
   List<ProblemBulletin> problems = [];
 
+  // List<Map<String, Object?>> problemsBulletins = await db.query(  // FOR TESTING AND DEMONSTRATION PURPOSES
+  //   'problem_bulletin',
+  // );
+
   List<Map<String, Object?>> problemsBulletins = await db.query(
+    // ACTUAL QUERY
     'problem_bulletin',
+    where:
+        'avBulletinId = ? and avAreaId = ? and problem = ? and ? between elevationFrom and elevationTo and ? between validStart and validEnd',
+    whereArgs: [
+      avBulletionId,
+      areaId,
+      problemType,
+      point.elevation,
+      date1.millisecondsSinceEpoch,
+    ],
   );
-  // where:
-  //     'avBulletinId = ? and avAreaId = ?', // and problem = ? and ? between elevationFrom and elevationTo
-  // whereArgs: [avBulletionId, areaId]);
 
   debugPrint('problemsBulletins: $problemsBulletins');
   problems = problemsBulletins

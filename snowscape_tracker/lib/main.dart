@@ -41,6 +41,7 @@ import 'package:snowscape_tracker/views/auth_page.dart';
 import 'package:snowscape_tracker/views/main_app_container_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 import 'commands/base_command.dart' as Commands;
 import 'models/home_model.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
@@ -62,6 +63,8 @@ void headlessTask(bg.HeadlessEvent headlessEvent) async {
 }
 
 Future<void> populateDatabase(Database db) async {
+  var uuid = const Uuid();
+
   final String response = await rootBundle.loadString('assets/rules.json');
   if (response.contains('error')) {
     throw Exception('Failed to load rules');
@@ -99,8 +102,10 @@ Future<void> populateDatabase(Database db) async {
 
     if (rule.weatherDescriptions != null) {
       for (var wd in rule.weatherDescriptions!) {
+        var wdId = uuid.v4();
+
         WeatherDescription weatherDescription = WeatherDescription(
-          weatherDescriptionId: index,
+          weatherDescriptionId: wdId,
           ruleId: rule1,
           dayDelay: wd!.dayDelay,
           tempAvgMin: wd.tempAvgMin,
@@ -121,8 +126,10 @@ Future<void> populateDatabase(Database db) async {
     }
     if (rule.patterns != null) {
       for (var pattern in rule.patterns!) {
+        var pId = uuid.v4();
+
         PatternRule dbPattern = PatternRule(
-          patternId: index,
+          patternId: pId,
           ruleId: rule1,
           dayDelay: pattern?.dayDelay,
           hourMin: pattern?.hourMin,
@@ -139,8 +146,10 @@ Future<void> populateDatabase(Database db) async {
 
     if (rule.problems != null) {
       for (var problem in rule.problems!) {
+        var prId = uuid.v4();
+
         ProblemRule dbProblem = ProblemRule(
-          problemId: index,
+          problemId: prId,
           ruleId: rule1,
           dayDelay: problem?.dayDelay,
           hourMin: problem?.hourMin,
@@ -158,8 +167,10 @@ Future<void> populateDatabase(Database db) async {
 
     if (rule.dangers != null) {
       for (var danger in rule.dangers!) {
+        var dId = uuid.v4();
+
         DangerRule dbDanger = DangerRule(
-          dangerId: index,
+          dangerId: dId,
           ruleId: rule1,
           dayDelay: danger?.dayDelay,
           checkElevation: danger?.checkElevation,
@@ -224,9 +235,7 @@ Future main() async {
     UserPreferences.setFirstLoad(false);
     // TODO: here we load the initial data in the local sqlite database
 
-    await populateDatabase(database).then((_) async {
-      // testRules(database);
-    });
+    await populateDatabase(database);
   }
 
   DateTime todaysDate =
@@ -236,8 +245,7 @@ Future main() async {
   var todaysDateFormated = DateFormat('dd-MM-yyyy').format(todaysDate);
   // if we have not updated the weather and avalanche data today, we need to update it
   if (lastAdded != todaysDateFormated) {
-    // TODO: remove lastAdded == '' check when finished testing
-    // Get weather data for the next days and save it to the local database if it is not already there for today
+    // Get weather data for the next 3 days and save it to the local database if it is not already there for today
 
     // Get avalanche forecast data for the next days and save it to the local database if it is not already there for today
     bool? avSuccess = await ArsoWeatherService().getAvalancheBulletin(database);

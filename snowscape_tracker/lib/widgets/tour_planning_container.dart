@@ -8,8 +8,71 @@ import 'package:snowscape_tracker/helpers/formating.dart';
 import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/views/save_planned_tour.dart';
 
-class TourPlanningContainer extends StatelessWidget {
+class TourPlanningContainer extends StatefulWidget {
   const TourPlanningContainer({super.key});
+
+  @override
+  State<TourPlanningContainer> createState() => _TourPlanningContainerState();
+}
+
+class _TourPlanningContainerState extends State<TourPlanningContainer> {
+  DateTime plannedTourTime =
+      PlannedTourCommand().getPlannedTourTime() ?? DateTime.now();
+
+  Future<void> pickDate() async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: plannedTourTime,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(Duration(days: 3)),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Theme.of(context).primaryColor,
+              ),
+            ),
+            child: child!,
+          );
+        });
+    if (picked != null && picked != plannedTourTime) {
+      setState(() {
+        plannedTourTime = picked;
+      });
+      PlannedTourCommand().setPlannedTourTime(picked);
+    }
+
+    return;
+  }
+
+  Future<void> pickTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(plannedTourTime),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              colorScheme:
+                  ColorScheme.light(primary: Theme.of(context).primaryColor),
+            ),
+            child: child!,
+          );
+        });
+    if (picked != null) {
+      setState(() {
+        plannedTourTime = DateTime(
+          plannedTourTime.year,
+          plannedTourTime.month,
+          plannedTourTime.day,
+          picked.hour,
+          picked.minute,
+        );
+      });
+      PlannedTourCommand().setPlannedTourTime(plannedTourTime);
+    }
+
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +138,65 @@ class TourPlanningContainer extends StatelessWidget {
         children: [
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                "Planning tour",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleSmall!
-                    .copyWith(color: const Color.fromARGB(141, 0, 0, 0)),
-                textAlign: TextAlign.center,
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Text(
+                  //   "Planning tour",
+                  //   style: Theme.of(context)
+                  //       .textTheme
+                  //       .titleSmall!
+                  //       .copyWith(color: const Color.fromARGB(141, 0, 0, 0)),
+                  //   textAlign: TextAlign.center,
+                  // ),
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          await pickDate();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).primaryColorLight,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            )),
+                        child: Text(
+                            '${plannedTourTime?.day}/${plannedTourTime?.month}/${plannedTourTime?.year}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontSize: 18))),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: ElevatedButton(
+                        onPressed: () async {
+                          await pickTime();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).primaryColorLight,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            )),
+                        child: Text(
+                            '${plannedTourTime?.hour.toString().padLeft(2, '0')}:${plannedTourTime?.minute.toString().padLeft(2, '0')}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontSize: 18))),
+                  ),
+                ],
               ),
             ),
           ),
@@ -282,7 +396,10 @@ class TourPlanningContainer extends StatelessWidget {
                           MapCommand().stopTourPlanning();
                         },
                         child: Text("Cancel",
-                            style: Theme.of(context).textTheme.titleSmall),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontSize: 18)),
                       ),
                     ),
                   ),
@@ -305,8 +422,10 @@ class TourPlanningContainer extends StatelessWidget {
                                 generateRoute();
                               },
                               child: Text("Calculate",
-                                  style:
-                                      Theme.of(context).textTheme.titleSmall),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(fontSize: 18)),
                             ),
                     ),
                   ),
@@ -330,7 +449,10 @@ class TourPlanningContainer extends StatelessWidget {
                           );
                         },
                         child: Text("Save route",
-                            style: Theme.of(context).textTheme.titleSmall),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall!
+                                .copyWith(fontSize: 18)),
                       ),
                     ),
                   ),

@@ -4,6 +4,7 @@ class PlannedTourDb {
   double distance;
   double totalElevationGain;
   double duration;
+  DateTime plannedTourTime;
 
   PlannedTourDb({
     this.id,
@@ -11,6 +12,7 @@ class PlannedTourDb {
     required this.distance,
     required this.totalElevationGain,
     required this.duration,
+    required this.plannedTourTime,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class PlannedTourDb {
       'distance': distance,
       'totalElevationGain': totalElevationGain,
       'duration': duration,
+      'plannedTourTime': plannedTourTime.millisecondsSinceEpoch,
     };
   }
 
@@ -28,7 +31,9 @@ class PlannedTourDb {
         tourName = map['tourName'],
         distance = map['distance'],
         totalElevationGain = map['totalElevationGain'],
-        duration = map['duration'];
+        duration = map['duration'],
+        plannedTourTime =
+            DateTime.fromMillisecondsSinceEpoch(map['plannedTourTime']);
 
   static createTable() {
     return '''
@@ -37,7 +42,8 @@ class PlannedTourDb {
         tourName TEXT,
         distance REAL,
         totalElevationGain REAL,
-        duration REAL
+        duration REAL,
+        plannedTourTime INTEGER
       )
     ''';
   }

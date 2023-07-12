@@ -1,6 +1,6 @@
 class PatternRule {
   // @PrimaryKey(autoGenerate = true)
-  final int patternId;
+  final String patternId;
   final int ruleId;
   final int? dayDelay;
   final int? hourMax;
@@ -40,7 +40,7 @@ class PatternRule {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS pattern_rule (
-      patternId INTEGER PRIMARY KEY AUTOINCREMENT,
+      patternId TEXT PRIMARY KEY,
       ruleId INTEGER NOT NULL,
       dayDelay INTEGER,
       hourMax INTEGER,
