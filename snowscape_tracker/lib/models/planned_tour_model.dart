@@ -104,6 +104,13 @@ class PlannedTourModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  set setPlannedTourTime(DateTime time) {
+    _plannedTour?.plannedTourTime = time;
+    notifyListeners();
+  }
+
+  get plannedTourTime => _plannedTour?.plannedTourTime;
+
   Future<void> removeLastRoute() async {
     // remove last added segment in the route
     List<LatLng> route = _plannedTour?.route ?? [];

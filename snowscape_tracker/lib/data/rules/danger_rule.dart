@@ -1,6 +1,6 @@
 class DangerRule {
   // @PrimaryKey(autoGenerate = true)
-  final int dangerId;
+  final String dangerId;
   final int ruleId;
   final bool? checkElevation;
   final int? dayDelay;
@@ -40,7 +40,7 @@ class DangerRule {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS danger_rule (
-      dangerId INTEGER PRIMARY KEY AUTOINCREMENT,
+      dangerId TEXT PRIMARY KEY,
       ruleId INTEGER NOT NULL,
       checkElevation INTEGER,
       dayDelay INTEGER,

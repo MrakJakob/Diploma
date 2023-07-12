@@ -1,6 +1,6 @@
 class ProblemRule {
   // @PrimaryKey(autoGenerate = true)
-  final int problemId;
+  final String problemId;
   final int ruleId;
   final bool? checkElevation;
   final int? dayDelay;
@@ -44,7 +44,7 @@ class ProblemRule {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS problem_rule (
-      problemId INTEGER PRIMARY KEY AUTOINCREMENT,
+      problemId TEXT PRIMARY KEY,
       ruleId INTEGER NOT NULL,
       checkElevation INTEGER,
       dayDelay INTEGER,

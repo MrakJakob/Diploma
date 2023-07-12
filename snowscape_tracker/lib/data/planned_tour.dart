@@ -59,6 +59,7 @@ class PlannedTour {
   late List<Marker> markers;
   late List<LatLng> route;
   late List<MatchedRule>? matchedRules;
+  DateTime plannedTourTime = DateTime.now();
 
   PlannedTour({
     this.id,
