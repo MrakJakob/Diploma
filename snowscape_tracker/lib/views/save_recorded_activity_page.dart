@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -6,6 +7,7 @@ import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/helpers/alert_dialog.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
@@ -19,13 +21,38 @@ class SaveRecordedActivityPage extends StatefulWidget {
 
 class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
   int confirm = -1;
+  bool? internetConnection;
+
+  Future<void> checkConnectivity() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult != ConnectivityResult.mobile &&
+        connectivityResult != ConnectivityResult.wifi) {
+      SnackBarWidget.show("No internet connection", null);
+      setState(() {
+        internetConnection = false;
+      });
+    } else {
+      setState(() {
+        internetConnection = true;
+      });
+    }
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
     bool isPublic = context.select<RecordActivityModel, bool>(
         (recordActivityModel) => recordActivityModel.getIsPublic);
 
+    internetConnection == null ? checkConnectivity() : null;
+
     void saveTour() async {
+      // we check if the user is connected to the internet again
+      await checkConnectivity();
+      if (internetConnection == false) {
+        return;
+      }
+
       // we save the tour and then pop the save recorded activity page
       context.loaderOverlay.show();
       RecordActivityCommand().saveRecordedActivity().then((success) async {

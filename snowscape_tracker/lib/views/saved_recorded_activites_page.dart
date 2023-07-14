@@ -1,13 +1,42 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:snowscape_tracker/commands/profile_command.dart';
 import 'package:snowscape_tracker/constants/format_date.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 
-class SavedRecordedActivitiesPage extends StatelessWidget {
+class SavedRecordedActivitiesPage extends StatefulWidget {
   const SavedRecordedActivitiesPage({super.key});
 
   @override
+  State<SavedRecordedActivitiesPage> createState() =>
+      _SavedRecordedActivitiesPageState();
+}
+
+class _SavedRecordedActivitiesPageState
+    extends State<SavedRecordedActivitiesPage> {
+  bool? internetConnection;
+
+  Future<void> checkConnectivity() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult != ConnectivityResult.mobile &&
+        connectivityResult != ConnectivityResult.wifi) {
+      SnackBarWidget.show("No internet connection", null);
+      setState(() {
+        internetConnection = false;
+      });
+    } else {
+      setState(() {
+        internetConnection = true;
+      });
+    }
+    return;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    internetConnection == null ? checkConnectivity() : null;
+
     return StreamBuilder(
       stream: ProfileCommand().readRecordedSessions(),
       builder: (context, recordedActivity) {

@@ -7,7 +7,7 @@ import 'package:snowscape_tracker/services/arcGIS_service.dart';
 class PlannedTourModel extends ChangeNotifier {
   bool _isTourPlanning = false;
   PlannedTour? _plannedTour;
-  bool _drawStraightLine = false;
+  bool _drawStraightLine = true;
   bool _loadingPathData = false;
   List<ContextPoint> _contextPoints = [];
   // List<MatchedRule> _matchedRules = [];

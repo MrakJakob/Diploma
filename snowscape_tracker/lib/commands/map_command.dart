@@ -58,8 +58,13 @@ class MapCommand extends BaseCommand {
   Future<void> clearMap() async {
     if (mapModel.mapController == null) return;
 
-    await mapModel.mapController!.clearLines();
-    await mapModel.mapController!.clearSymbols();
+    mapModel.mapController?.lineManager != null
+        ? await mapModel.mapController!.clearLines()
+        : null;
+
+    mapModel.mapController?.symbolManager != null
+        ? await mapModel.mapController!.clearSymbols()
+        : null;
   }
 
   void showRecordingContainer() {
