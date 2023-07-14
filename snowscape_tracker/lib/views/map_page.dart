@@ -29,6 +29,7 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   bool recoveredPath = false;
+  bool disabledButton = false;
 
   @override
   void initState() {
@@ -153,8 +154,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
         ? handleLocationUpdate(currentLocation)
         : null; // handle location update only if the current location is not null
 
-    void handleOnCurrentLocationPressed() {
-      LocationCommand().getCurrentLocation();
+    Future<void> handleOnCurrentLocationPressed() async {
+      await LocationCommand().getCurrentLocation();
     }
 
     void onMapCreated(MapboxMapController controller) async {
@@ -266,16 +267,28 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       floatingActionButton:
           !recordingContainerVisible && !tourPlanningContainerVisible
               ? FloatingActionButton(
-                  onPressed: () {
-                    handleOnCurrentLocationPressed();
-                  },
+                  onPressed: disabledButton
+                      ? null
+                      : () {
+                          setState(() {
+                            disabledButton = true;
+                          });
+
+                          handleOnCurrentLocationPressed().then((value) {
+                            setState(() {
+                              disabledButton = false;
+                            });
+                          });
+                        },
                   backgroundColor: Theme.of(context).secondaryHeaderColor,
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 5),
                     child: Icon(
                       TablerIcons.current_location,
-                      color: Theme.of(context).primaryColor,
-                      size: 30,
+                      color: disabledButton
+                          ? Theme.of(context).disabledColor
+                          : Theme.of(context).primaryColor,
+                      size: 28,
                     ),
                   ),
                 )
