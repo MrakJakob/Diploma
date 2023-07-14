@@ -67,6 +67,7 @@ class RecordActivityService {
         .collection("user_data")
         .doc(uid)
         .collection("recorded_activities")
+        .orderBy("startTime", descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => RecordedActivity.fromSnapshot(doc))
