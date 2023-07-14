@@ -9,17 +9,17 @@ import 'dart:math' show cos, sqrt, asin;
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class RecordActivityCommand extends BaseCommand {
-  void startRecording() {
+  Future<void> startRecording() async {
     // recordActivityModel.isRecording = true;
     recordActivityModel.recordingStatus = RecordingStatus.recording;
     recordActivityModel.createRecordedActivity();
     UserPreferences.setActivityStartTime(recordActivityModel
         .getStartTime()); // save the start time of the recording activity to shared preferences
     // UserPreferences.setRecording(true); // and set recording status to true
-    UserPreferences.setRecording(RecordingStatus.recording);
+    await UserPreferences.setRecording(RecordingStatus.recording);
   }
 
-  void stopRecording() async {
+  Future<void> stopRecording() async {
     recordActivityModel.recordingStatus = RecordingStatus.paused;
 
     // recordActivityModel.endRecordedActivity();

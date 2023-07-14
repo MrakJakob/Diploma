@@ -25,6 +25,7 @@ class ExplorePage extends StatefulWidget {
 class _ExplorePageState extends State<ExplorePage> {
   List<RecordedActivity> recordedActivitiesData = [];
   bool firstLoad = true;
+  bool disabledButton = false;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _ExplorePageState extends State<ExplorePage> {
     }
 
     Future<void> handleOnCurrentLocationPressed() async {
-      LocationCommand().getCurrentLocation();
+      await LocationCommand().getCurrentLocation();
       currentLocation != null ? handleLocationUpdate(currentLocation) : null;
     }
 
@@ -211,16 +212,27 @@ class _ExplorePageState extends State<ExplorePage> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            handleOnCurrentLocationPressed();
-          },
+          onPressed: disabledButton
+              ? null
+              : () {
+                  setState(() {
+                    disabledButton = true;
+                  });
+                  handleOnCurrentLocationPressed().then((value) {
+                    setState(() {
+                      disabledButton = false;
+                    });
+                  });
+                },
           backgroundColor: Theme.of(context).secondaryHeaderColor,
           child: Container(
             margin: const EdgeInsets.only(bottom: 5),
             child: Icon(
               TablerIcons.current_location,
-              color: Theme.of(context).primaryColor,
-              size: 30,
+              color: disabledButton
+                  ? Theme.of(context).disabledColor
+                  : Theme.of(context).primaryColor,
+              size: 28,
             ),
           ),
         ));

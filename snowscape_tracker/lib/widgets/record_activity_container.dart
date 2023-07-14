@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:snowscape_tracker/commands/location_command.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/helpers/formating.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:snowscape_tracker/views/save_recorded_activity_page.dart';
 
@@ -21,6 +23,7 @@ class RecordActivityContainer extends StatefulWidget {
 
 class _RecordActivityContainerState extends State<RecordActivityContainer> {
   Timer? timer;
+  bool disabledButton = false;
 
   @override
   void initState() {
@@ -70,22 +73,54 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
       (model) => model.getDuration,
     );
 
-    void startRecording() {
-      RecordActivityCommand()
-          .startRecording(); // we need to start recording to create RecordedActivity object
-      LocationCommand()
-          .changeTrackingPace(); // we need to change the tracking pace to get instant location updates
+    void startRecording() async {
+      setState(() {
+        disabledButton = true;
+      });
+      var permissionStatus = await Permission.location.status;
+      if (permissionStatus.isDenied) {
+        await Permission.location.request();
 
-      // we set
-      timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-        RecordActivityCommand().incrementActivityDuration();
-        // we update the duration every second
+        if (await Permission.location.isDenied) {
+          SnackBarWidget.show(
+              "Location tracking at all times is required for this function",
+              null);
+          await Future.delayed(Duration(seconds: 2));
+
+          openAppSettings();
+        }
+      }
+      if (permissionStatus.isGranted) {
+        await Permission.locationAlways.request();
+
+        if (await Permission.locationAlways.isDenied) {
+          SnackBarWidget.show(
+              "Location tracking at all times is required for this function",
+              null);
+          await Future.delayed(Duration(seconds: 2));
+
+          openAppSettings();
+        } else if (await Permission.locationAlways.isGranted) {
+          await RecordActivityCommand()
+              .startRecording(); // we need to start recording to create RecordedActivity object
+          LocationCommand()
+              .changeTrackingPace(); // we need to change the tracking pace to get instant location updates
+
+          // we set
+          timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+            RecordActivityCommand().incrementActivityDuration();
+            // we update the duration every second
+          });
+        }
+      }
+      setState(() {
+        disabledButton = false;
       });
     }
 
-    void stopRecording() {
+    void stopRecording() async {
       timer?.cancel(); // stop the timer
-      RecordActivityCommand().stopRecording();
+      await RecordActivityCommand().stopRecording();
       LocationCommand().changeTrackingPace();
     }
 
@@ -339,14 +374,18 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
                   flex: 1,
                   fit: FlexFit.loose,
                   child: GestureDetector(
-                    onTap: () {
-                      handleRecordingClick();
-                    },
+                    onTap: disabledButton
+                        ? null
+                        : () {
+                            handleRecordingClick();
+                          },
                     child: Container(
                       width: 70,
                       height: 70,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        color: disabledButton
+                            ? Theme.of(context).disabledColor
+                            : Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(50),
                       ),
                       alignment: Alignment.center,
