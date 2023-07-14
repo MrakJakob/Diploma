@@ -303,7 +303,7 @@ class PlannedTourCommand extends BaseCommand {
       return MatchedRule.fromMap(matchedRulesMaps[i]);
     });
 
-    return List.generate(maps.length, (i) {
+    List<PlannedTour> plannedTours = List.generate(maps.length, (i) {
       PlannedTourDb plannedTourDb = PlannedTourDb.fromMap(maps[i]);
 
       PlannedTour plannedTour = PlannedTour(
@@ -334,6 +334,8 @@ class PlannedTourCommand extends BaseCommand {
 
       return plannedTour;
     });
+    plannedTours.sort((a, b) => a.plannedTourTime.compareTo(b.plannedTourTime));
+    return plannedTours;
   }
 
   Future<void> loadSavedTourToMap(PlannedTour plannedTour) async {
