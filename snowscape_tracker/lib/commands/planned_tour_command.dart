@@ -132,7 +132,7 @@ class PlannedTourCommand extends BaseCommand {
       // draw a straight line
       MapboxDirectionsResponse response = MapboxDirectionsResponse();
       List<LatLng>? route = PlannedTourCommand().getRoute();
-      if (route != null && route.isNotEmpty) {
+      if (route != null && route.isEmpty) {
         // if the route is empty, we need to retrieve the starting marker and add it to the route
         // because this means that the user is adding the second marker to the map while using straight line mode
         LatLng lastMarkerCoordinates =

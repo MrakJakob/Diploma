@@ -48,6 +48,7 @@ dependencies:
   carousel_slider: ^4.2.1
   flutter_tabler_icons: ^1.1.2
   loader_overlay: ^2.2.0
+  connectivity_plus: ^4.0.1
   permission_handler: ^10.4.3
   
 

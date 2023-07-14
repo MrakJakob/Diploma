@@ -13,7 +13,9 @@ class AppModel extends ChangeNotifier {
   int _selectedPageIndex = 0;
 
   String get currentUser => _currentUser;
+
   bool get isLogin => _isLogin;
+
   GlobalKey<FormState> get formKey => _formKey;
 
   set currentUser(String currentUser) {

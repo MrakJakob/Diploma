@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
@@ -15,6 +16,7 @@ import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 import 'package:snowscape_tracker/views/recorded_activity_details.dart';
 
 class ExplorePage extends StatefulWidget {
@@ -25,6 +27,7 @@ class ExplorePage extends StatefulWidget {
 class _ExplorePageState extends State<ExplorePage> {
   List<RecordedActivity> recordedActivitiesData = [];
   bool firstLoad = true;
+  bool internetConnection = true;
   bool disabledButton = false;
 
   @override
@@ -47,15 +50,33 @@ class _ExplorePageState extends State<ExplorePage> {
       currentLocation != null ? handleLocationUpdate(currentLocation) : null;
     }
 
+    Future<void> checkConnectivity() async {
+      final connectivityResult = await (Connectivity().checkConnectivity());
+      if (connectivityResult != ConnectivityResult.mobile &&
+          connectivityResult != ConnectivityResult.wifi) {
+        SnackBarWidget.show("No internet connection", null);
+        setState(() {
+          internetConnection = false;
+        });
+      } else {
+        setState(() {
+          internetConnection = true;
+        });
+      }
+      return;
+    }
+
     void onMapCreated(MapboxMapController controller) async {
       // debugPrint('Map created');
       MapCommand().initiateMap(controller);
+
+      await checkConnectivity();
 
       Stream<List<RecordedActivity>>? recordedActivityStream =
           ExploreCommand().readPublicRecordedSessions();
 
       recordedActivityStream!.listen((recordedActivities) async {
-        if (currentLocation != null) {
+        if (currentLocation != null && recordedActivities != null) {
           recordedActivities.sort((a, b) => GeoPropertiesCalculator()
               .calculateDistanceHaversine(
                   a.points.first,
@@ -70,22 +91,26 @@ class _ExplorePageState extends State<ExplorePage> {
               ));
         }
 
-        for (var recordedActivity in recordedActivities) {
-          if (recordedActivity.points.isNotEmpty && currentLocation != null) {
-            //  &&
-            // GeoPropertiesCalculator().calculateDistanceHaversine(
-            //         recordedActivity.points[0],
-            //         LatLng(currentLocation.coords.latitude,
-            //             currentLocation.coords.longitude)) <
-            //     100
-            await MapCommand().showRecordedActivityMarker(recordedActivity);
+        if (recordedActivities != null) {
+          for (var recordedActivity in recordedActivities) {
+            if (recordedActivity.points.isNotEmpty && currentLocation != null) {
+              //  &&
+              // GeoPropertiesCalculator().calculateDistanceHaversine(
+              //         recordedActivity.points[0],
+              //         LatLng(currentLocation.coords.latitude,
+              //             currentLocation.coords.longitude)) <
+              //     100
+              await MapCommand().showRecordedActivityMarker(recordedActivity);
+            }
+          }
+          setState(() {
+            recordedActivitiesData = recordedActivities;
+          });
+          if (recordedActivitiesData.isNotEmpty) {
+            MapCommand().showRecordedActivity(
+                recordedActivitiesData.first, false, context);
           }
         }
-        setState(() {
-          recordedActivitiesData = recordedActivities;
-        });
-        MapCommand()
-            .showRecordedActivity(recordedActivitiesData.first, false, context);
       });
     }
 
