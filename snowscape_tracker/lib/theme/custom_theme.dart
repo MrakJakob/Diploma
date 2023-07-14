@@ -14,7 +14,7 @@ class CustomTheme {
       splashColor: Color.fromARGB(255, 29, 212, 206),
       // Define the default font family.
       fontFamily: GoogleFonts.montserrat().fontFamily,
-
+      disabledColor: Color.fromARGB(131, 40, 40, 43),
       // Define the default TextTheme.
       textTheme: const TextTheme(
         displayLarge: TextStyle(

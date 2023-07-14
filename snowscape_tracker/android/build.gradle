@@ -11,8 +11,8 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.15'
     }
     ext {
-       compileSdkVersion   = 31                // or higher
-       targetSdkVersion    = 31                // or higher
+       compileSdkVersion   = 33                // or higher
+       targetSdkVersion    = 33                // or higher
        appCompatVersion    = "1.4.2"           // or higher
        playServicesLocationVersion = "20.0.0"  // or higher
     }
