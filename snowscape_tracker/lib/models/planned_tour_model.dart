@@ -128,7 +128,7 @@ class PlannedTourModel extends ChangeNotifier {
             );
       var index = nearestPoint != null ? route.indexOf(nearestPoint) : -1;
       if (index != -1) {
-        // we find the closest marker in the route and remove all the markers after that
+        // we find the closest marker in the route and remove all the route points after that
         for (int i = index + 1; i < _plannedTour!.route.length; i++) {
           if ((_plannedTour!.route[i].latitude - lastMarker.point.latitude)
                       .abs() <

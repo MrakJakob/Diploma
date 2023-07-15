@@ -364,6 +364,7 @@ class ArcGISService extends BaseCommand {
           if (contextPoints == null || contextPoints.isEmpty) {
             return;
           }
+
           plannedTourModel.setContextPoints = [
             ...plannedTourModel.contextPoints,
             ...contextPoints
@@ -379,6 +380,19 @@ class ArcGISService extends BaseCommand {
       }
       path.removeRange(0, newRoute.length);
     }
+    // we recalculate the duration of the tour using the Munter's method
+    // and we also include routes that were not generated using the
+    // directions API, but were drawn as straight lines between points by the user
+    double approximateSkiTourDuration = GeoPropertiesCalculator()
+        .getApproximateDuration(plannedTourModel.contextPoints);
+
+    plannedTourModel.setDuration = approximateSkiTourDuration;
+
+    // we set the distance of the tour to the distance of the context point which
+    // includes the points that were not generated using the directions API,
+    // but were drawn as straight lines between points by the user
+    plannedTourModel.setDistance =
+        plannedTourModel.contextPoints.last.distanceFromStart;
   }
 
   Future<void> getRecordedPathElevationAndRecalculateDistance(
