@@ -1,5 +1,6 @@
 class PlannedTourDb {
   String? id;
+  String userId;
   String tourName;
   double distance;
   double totalElevationGain;
@@ -13,11 +14,13 @@ class PlannedTourDb {
     required this.totalElevationGain,
     required this.duration,
     required this.plannedTourTime,
+    required this.userId,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'userId': userId,
       'tourName': tourName,
       'distance': distance,
       'totalElevationGain': totalElevationGain,
@@ -28,6 +31,7 @@ class PlannedTourDb {
 
   PlannedTourDb.fromMap(Map<String, dynamic> map)
       : id = map['id'],
+        userId = map['userId'],
         tourName = map['tourName'],
         distance = map['distance'],
         totalElevationGain = map['totalElevationGain'],
@@ -39,6 +43,7 @@ class PlannedTourDb {
     return '''
       CREATE TABLE planned_tours (
         id TEXT PRIMARY KEY,
+        userId TEXT,
         tourName TEXT,
         distance REAL,
         totalElevationGain REAL,

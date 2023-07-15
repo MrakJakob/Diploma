@@ -63,10 +63,10 @@ class LocationService extends BaseCommand {
     if (permissionStatus.isDenied) {
       await Permission.location.request();
 
-      if (permissionStatus.isDenied) {
+      if (await Permission.location.status.isDenied) {
         await Permission.locationWhenInUse.request();
 
-        if (permissionStatus.isDenied) {
+        if (await Permission.locationWhenInUse.status.isDenied) {
           await SnackBarWidget.show(
               'Location permission is required to use this feature', null);
           await Future.delayed(Duration(seconds: 2));
