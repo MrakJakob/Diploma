@@ -120,4 +120,51 @@ class GeoPropertiesCalculator {
 
     return elevationGain;
   }
+
+  double getApproximateDuration(List<ContextPoint> contextPoints) {
+    // Calculate the approximate duration of the hike/ski walking for a given list of context points
+    // This is done by using the Munter's calculation for ski touring https://muntercalculation.com/index.php#how_it_works:~:text=What%20the%20Munter%20Calculation%20is
+    // 1 km of travel = 1 unit, 100 m of elevation change = 1 unit
+    var climbingSpeedInUnits = 4;
+    var descendingSpeedInUnits = 10;
+
+    var totalClimbDistance = 0.0;
+    var totalDescentDistance = 0.0;
+
+    var totalElevationGain = 0.0;
+    var totalElevationLoss = 0.0;
+
+    for (var i = 0; i < contextPoints.length - 1; i++) {
+      final point1 = contextPoints[i];
+      final point2 = contextPoints[i + 1];
+
+      final dElevation = point2.elevation - point1.elevation;
+      final distance = point2.distanceFromStart - point1.distanceFromStart;
+
+      if (dElevation > 0) {
+        totalElevationGain += dElevation;
+        totalClimbDistance += distance;
+      } else {
+        totalElevationLoss += dElevation;
+        totalDescentDistance += distance;
+      }
+    }
+    totalClimbDistance = totalClimbDistance / 1000; // convert to km
+    totalDescentDistance = totalDescentDistance / 1000; // convert to km
+
+    var elevationGainInUnits =
+        totalElevationGain / 100; // convert to 100m units
+    var elevationLossInUnits =
+        totalElevationLoss.abs() / 100; // convert to 100m units
+
+    var totalClimbTime =
+        (totalClimbDistance + elevationGainInUnits) / climbingSpeedInUnits;
+    var totalDescentTime =
+        (totalDescentDistance + elevationLossInUnits) / descendingSpeedInUnits;
+
+    final totalTime =
+        (totalClimbTime + totalDescentTime) * 3600; // convert to seconds
+
+    return totalTime;
+  }
 }
