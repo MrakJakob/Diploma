@@ -11,6 +11,7 @@ import 'package:snowscape_tracker/data/planned_tour.dart';
 import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 import 'package:snowscape_tracker/helpers/directions_handler.dart';
 import 'package:snowscape_tracker/helpers/match_rules.dart';
+import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
@@ -172,6 +173,7 @@ class PlannedTourCommand extends BaseCommand {
     }
 
     plannedTourModel.setTotalElevationGain = 0;
+    plannedTourModel.setContextPoints = [];
     plannedTourModel.setLoadingPathData = true;
     // int totalElevation =
     //     await arcGISService.getElevationGain(plannedTourModel.route);
@@ -230,6 +232,7 @@ class PlannedTourCommand extends BaseCommand {
     }
     PlannedTourDb plannedTourDb = PlannedTourDb(
       id: plannedTourId,
+      userId: UserPreferences.getUserUid() ?? "",
       tourName: plannedTourModel.plannedTourNameController.text.trim(),
       distance: plannedTour.distance,
       duration: plannedTour.duration,
@@ -283,8 +286,10 @@ class PlannedTourCommand extends BaseCommand {
       version: 1,
     );
 
-    final List<Map<String, dynamic>> maps =
-        await database.query('planned_tours');
+    final List<Map<String, dynamic>> maps = await database.query(
+        'planned_tours',
+        where: "userId = ?",
+        whereArgs: [UserPreferences.getUserUid()]);
 
     final List<Map<String, dynamic>> markers = await database.query('markers');
 
