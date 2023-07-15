@@ -167,6 +167,10 @@ class PlannedTourCommand extends BaseCommand {
   }
 
   generateRoute() async {
+    if (plannedTourModel.markers.length < 2) {
+      return;
+    }
+
     plannedTourModel.setTotalElevationGain = 0;
     plannedTourModel.setLoadingPathData = true;
     // int totalElevation =
