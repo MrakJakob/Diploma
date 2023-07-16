@@ -147,8 +147,14 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
     }
 
     void generateRoute() async {
+      List<MatchedRule> matchedRules = PlannedTourCommand().getMatchedRules();
+      if (matchedRules.isNotEmpty) {
+        await MapCommand().clearMatchedRules(matchedRules);
+      }
       await PlannedTourCommand().generateRoute();
 
+      // get updated list of matched rules
+      matchedRules = PlannedTourCommand().getMatchedRules();
       if (matchedRules != null && matchedRules.isNotEmpty) {
         await MapCommand().addWarningMarkers(matchedRules, context);
       }

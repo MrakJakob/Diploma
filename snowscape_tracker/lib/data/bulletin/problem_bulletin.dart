@@ -1,5 +1,5 @@
 class ProblemBulletin {
-  int probId;
+  String probId;
   int avBulletinId;
   int problem;
   int avAreaId;
@@ -47,7 +47,7 @@ class ProblemBulletin {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS problem_bulletin (
-      probId INTEGER PRIMARY KEY AUTOINCREMENT,
+      probId TEXT PRIMARY KEY,
       avBulletinId INTEGER NOT NULL,
       problem INTEGER NOT NULL,
       avAreaId INTEGER NOT NULL,

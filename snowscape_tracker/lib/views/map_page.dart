@@ -190,8 +190,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
         }
 
-        if (PlannedTourCommand().plannedTourModel.matchedRules.isNotEmpty) {
-          MapCommand().addWarningMarkers(
+        if (PlannedTourCommand().getMatchedRules().isNotEmpty) {
+          await MapCommand().addWarningMarkers(
               PlannedTourCommand().plannedTourModel.matchedRules, context);
         }
       }

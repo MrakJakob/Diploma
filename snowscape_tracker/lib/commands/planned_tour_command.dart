@@ -52,6 +52,10 @@ class PlannedTourCommand extends BaseCommand {
     return plannedTourModel.lastMarker;
   }
 
+  List<MatchedRule> getMatchedRules() {
+    return plannedTourModel.matchedRules;
+  }
+
   // set the whole route
   void setRoute(List<LatLng> route) {
     plannedTourModel.setRoute = route;
@@ -122,9 +126,19 @@ class PlannedTourCommand extends BaseCommand {
     // remove the last added route to the marker we just removed
     await plannedTourModel.removeLastRoute();
 
+    Marker lastMarker = plannedTourModel.lastMarker;
+    // remove any matched rules that were added after the last marker
+    List<MatchedRule> matchedRulesAfterRemovedMarker = plannedTourModel
+        .matchedRules
+        .where((MatchedRule matchedRule) =>
+            matchedRule.distanceFromStart > lastMarker.distanceAtMarker)
+        .toList();
+
+    await MapCommand().clearMatchedRules(matchedRulesAfterRemovedMarker);
+
     // set the new duration and distance, to be the last marker's duration and distance
-    plannedTourModel.setDuration = plannedTourModel.lastMarker.durationAtMarker;
-    plannedTourModel.setDistance = plannedTourModel.lastMarker.distanceAtMarker;
+    plannedTourModel.setDuration = lastMarker.durationAtMarker;
+    plannedTourModel.setDistance = lastMarker.distanceAtMarker;
     return false;
   }
 
@@ -174,6 +188,8 @@ class PlannedTourCommand extends BaseCommand {
 
     plannedTourModel.setTotalElevationGain = 0;
     plannedTourModel.setContextPoints = [];
+    plannedTourModel.setMatchedRules = [];
+
     plannedTourModel.setLoadingPathData = true;
     // int totalElevation =
     //     await arcGISService.getElevationGain(plannedTourModel.route);

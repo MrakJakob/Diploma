@@ -71,9 +71,7 @@ Future<List<ContextPoint>> getApproximateRoute(List<ContextPoint> route) async {
       approximateRoute.add(point);
     } else {
       var lastPoint = approximateRoute.last;
-      var distance = GeoPropertiesCalculator()
-              .calculateDistanceHaversine(lastPoint.point, point.point) *
-          1000; // distance in meters
+      var distance = point.distanceFromStart - lastPoint.distanceFromStart;
 
       // we check if the distance between two points is more than 250 meters and less than 350 meters
       if (distance > 250 && distance < 350) {
@@ -173,8 +171,6 @@ Future<List<MatchedRule>> matchRules(
 
   debugPrint('rules: $rulesList');
 
-  //
-
   for (int i = 0; i < approximateRoute.length; i++) {
     for (RuleWithLists rule in rulesList) {
       bool isMatched = true;
@@ -257,8 +253,8 @@ Future<List<MatchedRule>> matchRules(
 
         DateTime date1 = DateTime(
             plannedTourTime.year,
-            plannedTourTime.month,
-            plannedTourTime.day + weatherDescription.dayDelay,
+            5,
+            8 + weatherDescription.dayDelay,
             weatherDescription.hourMin ?? 0,
             0,
             0,
@@ -267,8 +263,8 @@ Future<List<MatchedRule>> matchRules(
 
         DateTime date2 = DateTime(
             plannedTourTime.year,
-            plannedTourTime.month,
-            plannedTourTime.day + weatherDescription.dayDelay,
+            5,
+            8 + weatherDescription.dayDelay,
             weatherDescription.hourMax ?? 0,
             0,
             0,
@@ -372,8 +368,8 @@ Future<List<MatchedRule>> matchRules(
         DateTime date1 = DateTime(
             // actual date and time of the tour
             plannedTourTime.year,
-            plannedTourTime.month,
-            plannedTourTime.day + (problemRule.dayDelay ?? 0),
+            5,
+            8 + (problemRule.dayDelay ?? 0),
             plannedTourTime.hour + 0,
             0,
             0,
@@ -396,6 +392,9 @@ Future<List<MatchedRule>> matchRules(
             database,
             date1,
           );
+          if (problemRule.problemType == 3) {
+            debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
+          }
           if (problemsForAvalancheArea.isNotEmpty) {
             debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
           }
@@ -425,6 +424,7 @@ Future<List<MatchedRule>> matchRules(
           areaId: areaId,
           latitude: approximateRoute[i].point.latitude,
           longitude: approximateRoute[i].point.longitude,
+          distanceFromStart: approximateRoute[i].distanceFromStart,
         );
 
         matchedRules.add(matchedRule);
@@ -452,14 +452,10 @@ Future<List<ProblemBulletin>> getProblemsForAvalancheArea(
   List<Map<String, Object?>> problemsBulletins = await db.query(
     // ACTUAL QUERY
     'problem_bulletin',
-    where:
-        'avBulletinId = ? and avAreaId = ? and problem = ? and ? between elevationFrom and elevationTo and ? between validStart and validEnd',
+    where: 'problem = ? and ? between elevationFrom and elevationTo',
     whereArgs: [
-      avBulletionId,
-      areaId,
       problemType,
       point.elevation,
-      date1.millisecondsSinceEpoch,
     ],
   );
 

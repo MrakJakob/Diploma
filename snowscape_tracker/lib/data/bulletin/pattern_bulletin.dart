@@ -1,5 +1,5 @@
 class PatternBulletin {
-  int pattId;
+  String pattId;
   int avBulletinId;
   int pattern;
   int avAreaId;
@@ -28,7 +28,7 @@ class PatternBulletin {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS pattern_bulletin (
-      pattId INTEGER PRIMARY KEY AUTOINCREMENT,
+      pattId TEXT PRIMARY KEY,
       avBulletinId INTEGER NOT NULL,
       pattern INTEGER NOT NULL,
       avAreaId INTEGER NOT NULL,
