@@ -55,6 +55,22 @@ class MapCommand extends BaseCommand {
         : null;
   }
 
+  Future<void> clearMatchedRules(List<MatchedRule> matchedRules) async {
+    if (mapModel.mapController == null) return;
+
+    if (mapModel.mapController!.symbolManager != null) {
+      mapModel.mapController!.symbols.forEach((symbol) async {
+        for (var matchedRule in matchedRules) {
+          if (matchedRule.symbolId == symbol.id) {
+            await mapModel.mapController!.removeSymbol(symbol);
+            break;
+          }
+        }
+      });
+    }
+    return;
+  }
+
   Future<void> clearMap() async {
     if (mapModel.mapController == null) return;
 
@@ -121,7 +137,7 @@ class MapCommand extends BaseCommand {
       // show alert dialog with the rule info
       showDialog(
           context: context,
-          barrierDismissible: true,
+          barrierDismissible: false,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(matchedRule.name),
@@ -134,6 +150,8 @@ class MapCommand extends BaseCommand {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    // remove selected symbol
+                    mapModel.setSelectedSymbol = null;
                   },
                   child: Text('Close'),
                 ),
@@ -158,7 +176,9 @@ class MapCommand extends BaseCommand {
       if (matchedRulesOnSameLocation[groupIndex].first.latitude ==
               matchedRule.latitude &&
           matchedRulesOnSameLocation[groupIndex].first.longitude ==
-              matchedRule.longitude) {
+              matchedRule.longitude &&
+          matchedRulesOnSameLocation[groupIndex].first.name !=
+              matchedRule.name) {
         matchedRulesOnSameLocation[groupIndex].add(matchedRule);
       } else {
         matchedRulesOnSameLocation.add([matchedRule]);
@@ -168,17 +188,19 @@ class MapCommand extends BaseCommand {
     return matchedRulesOnSameLocation;
   }
 
-  Future<void>? addWarningMarkers(
-      List<MatchedRule> matchedRules, BuildContext context) {
-    if (mapModel.mapController == null) return null;
+  Future<void> addWarningMarkers(
+      List<MatchedRule> matchedRules, BuildContext context) async {
+    if (mapModel.mapController == null) return;
 
     // if we have more then one matched rule on the same location, we group them,
     // and add only one marker with all the rules
     List<List<MatchedRule>> matchedRulesOnSameLocation =
         groupMatchedRulesByLocation(matchedRules);
     int groupIndex = 0;
+    int index = 0;
+
     matchedRulesOnSameLocation.forEach((matchedRulesGroup) async {
-      await mapModel.mapController?.addSymbol(
+      var symbol = await mapModel.mapController?.addSymbol(
           SymbolOptions(
             geometry: LatLng(
               matchedRulesGroup.first.latitude,
@@ -190,13 +212,33 @@ class MapCommand extends BaseCommand {
           {
             'groupIndex': groupIndex,
           });
+
+      for (var matchedRule in matchedRulesGroup) {
+        if (symbol != null) {
+          matchedRules[index].symbolId = symbol.id;
+        }
+        index++;
+      }
+
       groupIndex++;
     });
 
+    plannedTourModel.setMatchedRules = matchedRules;
+
     mapModel.mapController?.onSymbolTapped.add((symbol) {
       print('Symbol tapped: ${symbol.id}');
-      showAlertInfo(symbol, context, matchedRulesOnSameLocation);
+
+      // we check if the selected symbol is the same as the tapped one
+      if (mapModel.selectedSymbol != symbol) {
+        // if it is not we can set the selected symbol to current and show the alert
+        // this is because we don't want to show the same alert multiple times
+        mapModel.setSelectedSymbol = symbol;
+        showAlertInfo(symbol, context, matchedRulesOnSameLocation);
+      }
     });
+
+    mapModel.mapController?.notifyListeners();
+    return;
   }
 
   Future<void> stopTourPlanning() async {

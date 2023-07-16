@@ -11,6 +11,8 @@ class MatchedRule {
   int areaId;
   double latitude;
   double longitude;
+  double distanceFromStart;
+  String symbolId = "";
 
   MatchedRule({
     required this.id,
@@ -24,6 +26,7 @@ class MatchedRule {
     required this.areaId,
     required this.latitude,
     required this.longitude,
+    required this.distanceFromStart,
   });
 
   Map<String, dynamic> toMap() {
@@ -39,6 +42,8 @@ class MatchedRule {
       'areaId': areaId,
       'latitude': latitude,
       'longitude': longitude,
+      'distanceFromStart': distanceFromStart,
+      'symbol': symbolId,
     };
   }
 
@@ -53,7 +58,9 @@ class MatchedRule {
         hiking = map['hiking'] == 1,
         areaId = map['areaId'],
         latitude = map['latitude'],
-        longitude = map['longitude'];
+        longitude = map['longitude'],
+        distanceFromStart = map['distanceFromStart'],
+        symbolId = map['symbol'];
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS matched_rules (
@@ -68,6 +75,8 @@ class MatchedRule {
       areaId INTEGER,
       latitude REAL,
       longitude REAL,
+      distanceFromStart REAL,
+      symbol TEXT,
       FOREIGN KEY (plannedTourId) REFERENCES planned_tours(id) ON DELETE CASCADE
     )''';
   }

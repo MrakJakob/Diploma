@@ -8,9 +8,11 @@ import 'package:snowscape_tracker/data/bulletin/problem_bulletin.dart';
 import 'package:snowscape_tracker/data/weather/weather_hour.dart';
 import 'package:snowscape_tracker/helpers/weather_xml_parser.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 
 class ArsoWeatherService {
   final dio = Dio();
+  var uuid = const Uuid();
 
   Future<bool> getWeatherForecast(Database db) async {
     String url =
@@ -81,7 +83,7 @@ class ArsoWeatherService {
         if (avId != -1) {
           bulletin.dangers.forEach((danger) async {
             DangerBulletin dangerObj = DangerBulletin(
-              dangId: 0,
+              dangId: uuid.v4(),
               avBulletinId: avId,
               aspects: danger.aspects,
               avAreaId: danger.avAreaId,
@@ -104,7 +106,7 @@ class ArsoWeatherService {
 
           bulletin.patterns.forEach((pattern) async {
             PatternBulletin patternObj = PatternBulletin(
-              pattId: 0,
+              pattId: uuid.v4(),
               avBulletinId: avId,
               pattern: pattern.pattern,
               avAreaId: pattern.avAreaId,
@@ -121,7 +123,7 @@ class ArsoWeatherService {
 
           bulletin.problems.forEach((problem) async {
             ProblemBulletin problemObj = ProblemBulletin(
-              probId: 0,
+              probId: uuid.v4(),
               avBulletinId: avId,
               problem: problem.problemId,
               avAreaId: problem.avAreaId,

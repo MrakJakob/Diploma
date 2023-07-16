@@ -150,6 +150,18 @@ class PlannedTourModel extends ChangeNotifier {
         _plannedTour?.route = sublist ?? [];
         return Future.value();
       }
+
+      // Remove all matched rules that were found on the just deleted route from the last marker
+      if (matchedRules != null) {
+        for (int i = 0; i < matchedRules!.length; i++) {
+          if (matchedRules![i].distanceFromStart >
+              lastMarker.distanceAtMarker) {
+            // we remove all the matched rules that were found on the route after the last marker
+            matchedRules!.removeAt(i);
+            i--;
+          }
+        }
+      }
     }
     notifyListeners();
   }

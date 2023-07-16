@@ -7,6 +7,7 @@ class MapModel extends ChangeNotifier {
   bool _tourPlanningContainerVisible = false;
   String _selectedFunctionality = "none";
   int _explorePageSelectedItemIndex = 0;
+  Symbol? _selectedSymbol;
 
   void initiateMap(MapboxMapController controller) {
     mapController = controller;
@@ -40,4 +41,11 @@ class MapModel extends ChangeNotifier {
   }
 
   get explorePageSelectedItemIndex => _explorePageSelectedItemIndex;
+
+  set setSelectedSymbol(Symbol? symbol) {
+    _selectedSymbol = symbol;
+    notifyListeners();
+  }
+
+  get selectedSymbol => _selectedSymbol;
 }
