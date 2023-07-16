@@ -29,6 +29,9 @@ class CustomTheme {
         titleMedium: TextStyle(
           fontSize: 24.0,
         ),
+        titleSmall: TextStyle(
+          fontSize: 20.0,
+        ),
         bodyLarge: TextStyle(
           fontSize: 16.0,
         ),

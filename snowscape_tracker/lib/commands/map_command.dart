@@ -3,6 +3,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
+import 'package:snowscape_tracker/constants/format_date.dart';
 import 'package:snowscape_tracker/data/planned_tour.dart';
 import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:snowscape_tracker/data/rules/matched_rule.dart';
@@ -143,7 +144,22 @@ class MapCommand extends BaseCommand {
               title: Text(matchedRule.name),
               content: SingleChildScrollView(
                 child: ListBody(children: <Widget>[
-                  Text(matchedRule.text),
+                  matchedRule.validEnd != null
+                      ? Text(
+                          "Valid until:\n${FormatDate().f.format(DateTime.fromMillisecondsSinceEpoch(matchedRule.validEnd!))}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall!
+                              .copyWith(color: Colors.black.withOpacity(0.5)),
+                        )
+                      : Container(),
+                  matchedRule.validEnd != null
+                      ? const SizedBox(height: 15)
+                      : Container(),
+                  Text(
+                    matchedRule.text,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ]),
               ),
               actions: [

@@ -174,6 +174,7 @@ Future<List<MatchedRule>> matchRules(
   for (int i = 0; i < approximateRoute.length; i++) {
     for (RuleWithLists rule in rulesList) {
       bool isMatched = true;
+      int? validEnd;
 
       String? aspect = rule.rule.aspect;
 
@@ -392,21 +393,13 @@ Future<List<MatchedRule>> matchRules(
             database,
             date1,
           );
-          if (problemRule.problemType == 3) {
-            debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
-          }
-          if (problemsForAvalancheArea.isNotEmpty) {
-            debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
-          }
 
           // debugPrint('problemsForAvalancheArea: $problemsForAvalancheArea');
-          for (ProblemBulletin problemBulletin in problemsForAvalancheArea) {
-            debugPrint('problemBulletin: ${problemBulletin}');
-          }
 
           if (problemsForAvalancheArea.isEmpty) {
             isMatched = false;
           } else {
+            validEnd = problemsForAvalancheArea.first.validEnd;
             debugPrint("problemRule.problemType: ${problemRule.problemType}");
           }
         }
@@ -427,6 +420,8 @@ Future<List<MatchedRule>> matchRules(
           distanceFromStart: approximateRoute[i].distanceFromStart,
         );
 
+        // if we have data till when the matched rule is relevant, we add it to the matched rule
+        matchedRule.validEnd = validEnd;
         matchedRules.add(matchedRule);
       }
     }
