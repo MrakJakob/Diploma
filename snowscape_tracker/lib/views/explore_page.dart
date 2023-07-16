@@ -153,8 +153,9 @@ class _ExplorePageState extends State<ExplorePage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    RecordedActivityDetails(recordedActivity)),
+                              builder: (context) =>
+                                  RecordedActivityDetails(recordedActivity),
+                            ),
                           );
                         },
                         child: Card(
