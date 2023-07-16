@@ -9,6 +9,7 @@ class UserPreferences {
 
   // static const String _isRecording = 'isRecording';
   static const String _userUid = 'userUid';
+  static const String _displayName = 'displayName';
   static const String _recordingStatus = 'recordingStatus';
   static const String _pathLongitudeCoordinates = 'pathLongitudeCoordinates';
   static const String _pathLatitudeCoordinates = 'pathLatitudeCoordinates';
@@ -37,6 +38,16 @@ class UserPreferences {
   }
 
   static String getUserUid() => _preferences!.getString(_userUid) ?? '';
+
+  static Future setDisplayName(String? displayName) async {
+    if (_preferences == null) {
+      // if the preferences haven't been initialized yet, we need to initialize them
+      await init();
+    }
+    await _preferences!.setString(_displayName, displayName ?? 'Anonymous');
+  }
+
+  static String getDisplayName() => _preferences!.getString(_displayName) ?? '';
 
   static String getWeatherLastUpdate() =>
       _preferences!.getString(_weatherLastUpdate) ?? '';
@@ -220,5 +231,6 @@ class UserPreferences {
       await init();
     }
     await _preferences!.remove(_userUid);
+    await _preferences!.remove(_displayName);
   }
 }

@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/data/planned_tour.dart';
+import 'package:snowscape_tracker/utils/user_preferences.dart';
 
 class SavedPlannedToursPage extends StatelessWidget {
   const SavedPlannedToursPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var displayName = UserPreferences.getDisplayName();
+
     return FutureBuilder(
       future: PlannedTourCommand().getPlannedToursFromDatabase(),
       builder: (context, AsyncSnapshot<List<PlannedTour>> snapshot) {
@@ -111,12 +114,12 @@ class SavedPlannedToursPage extends StatelessWidget {
                               children: [
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: const [
-                                    Icon(TablerIcons.user_circle),
-                                    SizedBox(width: 6),
+                                  children: [
+                                    const Icon(TablerIcons.user_circle),
+                                    const SizedBox(width: 6),
                                     Text(
-                                      "Jakob Mrak",
-                                      style: TextStyle(
+                                      displayName,
+                                      style: const TextStyle(
                                         fontSize: 16,
                                       ),
                                     ),

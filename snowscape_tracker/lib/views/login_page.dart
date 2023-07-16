@@ -19,21 +19,21 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> _handleLogin(GlobalKey<FormState> formKey) async {
+  Future<bool> _handleLogin(GlobalKey<FormState> formKey) async {
     final connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult != ConnectivityResult.mobile &&
         connectivityResult != ConnectivityResult.wifi) {
       SnackBarWidget.show("No internet connection", null);
-      return;
+      return false;
     }
     final isValid = formKey.currentState!.validate();
     if (!isValid) {
       // if the form is not valid, do not proceed with signup
-      return;
+      return false;
     }
     bool success = await LoginCommand()
         .execute(_emailController.text.trim(), _passwordController.text.trim());
-    return;
+    return success;
   }
 
   void _switchToSignup() {
@@ -114,8 +114,10 @@ class _LoginPageState extends State<LoginPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               context.loaderOverlay.show();
-                              _handleLogin(formKey).then((_) {
-                                context.loaderOverlay.hide();
+                              _handleLogin(formKey).then((success) {
+                                if (!success) {
+                                  context.loaderOverlay.hide();
+                                }
                               });
                             },
                             style: ButtonStyle(
