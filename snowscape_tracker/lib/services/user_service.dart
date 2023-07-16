@@ -12,9 +12,10 @@ class UserService {
         password: password,
       )
           .then(
-        (value) {
-          // we store user uid in shared preferences
-          UserPreferences.setUserUid(value.user?.uid);
+        (value) async {
+          // we store user uid and display name in shared preferences
+          await UserPreferences.setUserUid(value.user?.uid);
+          await UserPreferences.setDisplayName(value.user?.displayName);
         },
       );
     } on FirebaseAuthException catch (e) {
@@ -42,10 +43,11 @@ class UserService {
         password: password,
       )
           .then(
-        (value) {
-          // we store user uid in shared preferences and name to firebase
+        (value) async {
+          // we store user uid and display name in shared preferences and display name also to firebase
           if (value.user != null) {
-            UserPreferences.setUserUid(value.user?.uid);
+            await UserPreferences.setUserUid(value.user?.uid);
+            UserPreferences.setDisplayName(displayName);
             value.user?.updateDisplayName(displayName);
           }
         },
