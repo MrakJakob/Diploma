@@ -60,8 +60,13 @@ class SavedPlannedToursPage extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       color: Colors.grey[200],
                                     ),
-                                    child: const Image(
-                                      image: AssetImage("assets/mountain.png"),
+                                    child: const Center(
+                                      child: Image(
+                                        image:
+                                            AssetImage("assets/mountain.png"),
+                                        width: 140,
+                                        height: 140,
+                                      ),
                                     )),
                               ),
                             ),

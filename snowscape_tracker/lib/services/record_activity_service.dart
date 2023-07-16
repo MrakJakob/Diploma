@@ -24,6 +24,7 @@ class RecordActivityService {
           FirebaseAuth.instance.currentUser?.displayName ?? "Anonymous user";
     }
 
+    Map<String, dynamic> recordedActivityMap = recordedActivity.toMap();
     if (recordedActivity.isPublic) {
       // if user wants to make the activity public, save it to the public collection as well
       final publicDocRef = FirebaseFirestore.instance
@@ -31,7 +32,7 @@ class RecordActivityService {
           .doc();
 
       try {
-        await publicDocRef.set(recordedActivity.toMap());
+        await publicDocRef.set(recordedActivityMap);
       } catch (e) {
         debugPrint(e.toString());
         SnackBarWidget.show(e.toString(), Colors.red);
@@ -46,7 +47,7 @@ class RecordActivityService {
         .doc();
 
     try {
-      await docRef.set(recordedActivity.toMap());
+      await docRef.set(recordedActivityMap);
     } catch (e) {
       debugPrint(e.toString());
       SnackBarWidget.show(e.toString(), Colors.red);

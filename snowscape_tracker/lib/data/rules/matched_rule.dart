@@ -13,6 +13,7 @@ class MatchedRule {
   double longitude;
   double distanceFromStart;
   String symbolId = "";
+  int? validEnd; // validEnd in milisecondsSinceEpoch
 
   MatchedRule({
     required this.id,
@@ -44,6 +45,7 @@ class MatchedRule {
       'longitude': longitude,
       'distanceFromStart': distanceFromStart,
       'symbol': symbolId,
+      'validEnd': validEnd,
     };
   }
 
@@ -60,7 +62,8 @@ class MatchedRule {
         latitude = map['latitude'],
         longitude = map['longitude'],
         distanceFromStart = map['distanceFromStart'],
-        symbolId = map['symbol'];
+        symbolId = map['symbol'],
+        validEnd = map['validEnd'];
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS matched_rules (
@@ -77,6 +80,7 @@ class MatchedRule {
       longitude REAL,
       distanceFromStart REAL,
       symbol TEXT,
+      validEnd INTEGER,
       FOREIGN KEY (plannedTourId) REFERENCES planned_tours(id) ON DELETE CASCADE
     )''';
   }
