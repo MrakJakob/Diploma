@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/commands/planned_tour_command.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 
 class SavePlannedTour extends StatefulWidget {
   const SavePlannedTour({super.key});
 
   @override
-  _SavePlannedTourState createState() => _SavePlannedTourState();
+  SavePlannedTourState createState() => SavePlannedTourState();
 }
 
-class _SavePlannedTourState extends State<SavePlannedTour> {
+class SavePlannedTourState extends State<SavePlannedTour> {
   @override
   Widget build(BuildContext context) {
     Future<void> savePlannedTour() async {
       int sucess = await PlannedTourCommand().savePlannedTour();
 
       if (sucess > 0) {
+        SnackBarWidget.show("Tour saved successfully", Colors.green);
         PlannedTourCommand().stopTourPlanning();
         await MapCommand().clearMap();
         MapCommand().hideTourPlanningContainer();
