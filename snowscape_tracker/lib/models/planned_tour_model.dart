@@ -9,8 +9,8 @@ class PlannedTourModel extends ChangeNotifier {
   PlannedTour? _plannedTour;
   bool _drawStraightLine = true;
   bool _loadingPathData = false;
+  bool _addMarkers = false;
   List<ContextPoint> _contextPoints = [];
-  // List<MatchedRule> _matchedRules = [];
 
   set setLoadingPathData(bool status) {
     _loadingPathData = status;
@@ -200,4 +200,11 @@ class PlannedTourModel extends ChangeNotifier {
     _drawStraightLine = status;
     notifyListeners();
   }
+
+  set setAddMarkers(bool status) {
+    _addMarkers = status;
+    notifyListeners();
+  }
+
+  get addMarkers => _addMarkers;
 }

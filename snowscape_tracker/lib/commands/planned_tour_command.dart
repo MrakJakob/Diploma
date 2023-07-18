@@ -156,7 +156,7 @@ class PlannedTourCommand extends BaseCommand {
       }
       Marker marker = Marker("", coordinates, 0.0, 0.0);
       PlannedTourCommand().addMarker(marker);
-      // TODO: calculate distance between markers, duration, altitude gain, etc.
+
       response.route.add(coordinates);
 
       PlannedTourCommand().updateRoute(response);
@@ -377,6 +377,14 @@ class PlannedTourCommand extends BaseCommand {
     plannedTourModel.setMatchedRules = plannedTour.matchedRules ?? [];
     plannedTourModel.setLoadingPathData = false;
     plannedTourModel.setPlannedTourTime = plannedTour.plannedTourTime;
-    MapCommand().showTourPlanningContainer();
+    MapCommand().showTourPlanningContainer("start");
+  }
+
+  bool getAddMarkers() {
+    return plannedTourModel.addMarkers;
+  }
+
+  void setAddMarkers(bool addMarkers) {
+    plannedTourModel.setAddMarkers = addMarkers;
   }
 }

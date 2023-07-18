@@ -44,6 +44,7 @@ class CustomAppBar extends StatelessWidget {
             Navigator.of(context).pop();
           },
           () {
+            PlannedTourCommand().setAddMarkers(false);
             Navigator.of(context).pop();
           },
         );
@@ -64,7 +65,7 @@ class CustomAppBar extends StatelessWidget {
             await RecordActivityCommand().endRecordedActivity();
             await MapCommand().clearMap();
             UserPreferences.clearRecordedActivity();
-            MapCommand().showTourPlanningContainer();
+            MapCommand().showTourPlanningContainer("start");
             Navigator.of(context).pop();
           },
           () {
@@ -74,7 +75,7 @@ class CustomAppBar extends StatelessWidget {
         return;
       }
 
-      MapCommand().showTourPlanningContainer();
+      MapCommand().showTourPlanningContainer("start");
     }
 
     return SafeArea(
@@ -108,30 +109,34 @@ class CustomAppBar extends StatelessWidget {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              showRecordingContainer();
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  TablerIcons.circle_dot,
-                  color: selectedFunctionality == 'record'
-                      ? Theme.of(context).secondaryHeaderColor
-                      : Colors.white.withOpacity(0.7),
-                  size: 28,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'Record',
-                  style: TextStyle(
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: GestureDetector(
+              onTap: () {
+                showRecordingContainer();
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    TablerIcons.circle_dot,
                     color: selectedFunctionality == 'record'
                         ? Theme.of(context).secondaryHeaderColor
                         : Colors.white.withOpacity(0.7),
+                    size: 28,
                   ),
-                ),
-              ],
+                  SizedBox(height: 5),
+                  Text(
+                    'Record',
+                    style: TextStyle(
+                      color: selectedFunctionality == 'record'
+                          ? Theme.of(context).secondaryHeaderColor
+                          : Colors.white.withOpacity(0.7),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           GestureDetector(

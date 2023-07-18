@@ -30,6 +30,7 @@ class MapModel extends ChangeNotifier {
 
   set setSelectedFunctionality(String func) {
     _selectedFunctionality = func;
+
     notifyListeners();
   }
 

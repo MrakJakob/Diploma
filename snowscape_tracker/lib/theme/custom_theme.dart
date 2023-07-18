@@ -8,7 +8,8 @@ class CustomTheme {
       brightness: Brightness.light,
       primaryColor:
           Color.fromARGB(255, 40, 40, 43), // Color.fromARGB(255, 68, 116, 116),
-      primaryColorLight: Color.fromARGB(20, 40, 40, 43),
+      // primaryColorLight: Color.fromARGB(20, 40, 40, 43),
+      primaryColorLight: Color.fromARGB(255, 230, 230, 230),
       scaffoldBackgroundColor: Colors.white,
       secondaryHeaderColor: Color.fromARGB(255, 29, 212, 206),
       splashColor: Color.fromARGB(255, 29, 212, 206),
