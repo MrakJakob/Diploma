@@ -124,6 +124,10 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
       (model) => model.matchedRules,
     );
 
+    bool addMarkers = context.select<PlannedTourModel, bool>(
+      (model) => model.addMarkers,
+    );
+
     void handleUndo() async {
       bool isEmpty = await PlannedTourCommand().undo();
       if (isEmpty) {
@@ -161,10 +165,47 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
     }
 
     return Flexible(
-      flex: 8,
+      flex: 12,
       fit: FlexFit.tight,
       child: Column(
         children: [
+          SizedBox(
+            height: 25,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Theme.of(context).primaryColorLight),
+                      shadowColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(0),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      MapCommand().hideTourPlanningContainer("planning");
+                    },
+                    child: Icon(
+                      Icons.arrow_drop_down,
+                      size: 25,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: Theme.of(context).primaryColorLight,
+          ),
           Flexible(
             child: Padding(
               padding:
@@ -240,6 +281,32 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.tight,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Switch(
+                        value: addMarkers, // add markers on long press
+                        activeColor: Theme.of(context).secondaryHeaderColor,
+                        onChanged: (value) {
+                          PlannedTourCommand().setAddMarkers(value);
+                        },
+                      ),
+                      Text(addMarkers
+                          ? "Markers"
+                          : "Disabled"), // add markers on long press
+                    ],
+                  ),
+                ),
+                const VerticalDivider(
+                  width: 20,
+                  color: Color.fromARGB(26, 0, 0, 0),
+                  thickness: 1,
+                  indent: 10,
+                  endIndent: 10,
+                ),
                 Flexible(
                   flex: 1,
                   fit: FlexFit.tight,
@@ -384,7 +451,7 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Total elevation (m)',
+                        'Elevation gain (m)',
                         style: Theme.of(context).textTheme.bodySmall,
                         textAlign: TextAlign.center,
                       ),
@@ -431,11 +498,9 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
                           PlannedTourCommand().stopTourPlanning();
                           MapCommand().stopTourPlanning();
                         },
-                        child: Text("Cancel",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(fontSize: 18)),
+                        child: const Text(
+                          "Cancel",
+                        ),
                       ),
                     ),
                   ),
@@ -463,11 +528,7 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
                                       : null;
                                 });
                               },
-                              child: Text("Calculate",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 18)),
+                              child: Text("Calculate"),
                             ),
                     ),
                   ),
@@ -490,11 +551,9 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
                                 builder: (context) => const SavePlannedTour()),
                           );
                         },
-                        child: Text("Save route",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall!
-                                .copyWith(fontSize: 18)),
+                        child: const Text(
+                          "Save route",
+                        ),
                       ),
                     ),
                   ),

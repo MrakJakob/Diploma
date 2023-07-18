@@ -14,6 +14,7 @@ import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/models/location_model.dart';
 import 'package:snowscape_tracker/models/map_model.dart';
+import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:snowscape_tracker/widgets/custom_app_bar.dart';
@@ -133,9 +134,21 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
       (recordActivityModel) => recordActivityModel.points,
     );
 
+    bool addMarkers = context.select<PlannedTourModel, bool>(
+      (plannedTourModel) => plannedTourModel.addMarkers,
+    );
+
+    bool isTourPlanning = context.select<PlannedTourModel, bool>(
+      (plannedTourModel) => plannedTourModel.isTourPlanning,
+    );
+
     void handleLocationUpdate(bg.Location location) {
       // debugPrint('Location update received');
-      if (!tourPlanningContainerVisible) {
+
+      if (!isTourPlanning && !addMarkers) {
+        if (tourPlanningContainerVisible) {
+          return;
+        }
         // we don't want to update the camera position if the user is planning a tour
         MapCommand().updateCameraPosition(currentLocation);
       }
@@ -156,6 +169,10 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
 
     Future<void> handleOnCurrentLocationPressed() async {
       await LocationCommand().getCurrentLocation();
+      if (isTourPlanning || addMarkers) {
+        // if the user is planning a tour we need to update the camera position in this function
+        MapCommand().updateCameraPosition(currentLocation);
+      }
     }
 
     void onMapCreated(MapboxMapController controller) async {
@@ -198,12 +215,9 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     }
 
     void onMapLongClick(point, coordinates) async {
-      if (MapCommand().mapModel.tourPlanningContainerVisible) {
-        // if the tour planning container is visible, we want to add a markers to the map when the user long clicks on the map
-        // MapCommand().addMarker(point);
+      if (PlannedTourCommand().getAddMarkers()) {
+        // if addMarkers is set to true, we want to add a markers to the map when the user long clicks on the map
 
-        // debugPrint("Map long click coordinates: $coordinates");
-        // PlannedTourCommand().addMarker(coordinates);
         await MapCommand().addMarker(coordinates);
         if (PlannedTourCommand().isTourPlanning()) {
           // add coordinate to marker array and draw a line between markers
@@ -222,7 +236,6 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
           PlannedTourCommand().addMarker(marker);
         }
       }
-      // debugPrint("Map long click point: $point");
     }
 
     return Scaffold(
@@ -264,9 +277,74 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
               : Container(), // show the recording container only if the user clicks on the record button in AppBar
         ],
       ),
-      floatingActionButton:
-          !recordingContainerVisible && !tourPlanningContainerVisible
-              ? FloatingActionButton(
+      floatingActionButton: !recordingContainerVisible &&
+              !tourPlanningContainerVisible
+          ? isTourPlanning
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.loose,
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 20),
+                        width: 56,
+                        height: 0,
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.loose,
+                      child: FloatingActionButton(
+                        mini: true,
+                        splashColor: Theme.of(context).primaryColor,
+                        onPressed: () {
+                          MapCommand().showTourPlanningContainer("planning");
+                        },
+                        backgroundColor: Theme.of(context).primaryColorLight,
+                        child: Container(
+                          child: Icon(
+                            Icons.arrow_drop_up,
+                            color: Theme.of(context).primaryColor,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      fit: FlexFit.loose,
+                      child: FloatingActionButton(
+                        onPressed: disabledButton
+                            ? null
+                            : () {
+                                setState(() {
+                                  disabledButton = true;
+                                });
+
+                                handleOnCurrentLocationPressed().then((value) {
+                                  setState(() {
+                                    disabledButton = false;
+                                  });
+                                });
+                              },
+                        backgroundColor: Theme.of(context).secondaryHeaderColor,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 5),
+                          child: Icon(
+                            TablerIcons.current_location,
+                            color: disabledButton
+                                ? Theme.of(context).disabledColor
+                                : Theme.of(context).primaryColor,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : FloatingActionButton(
                   onPressed: disabledButton
                       ? null
                       : () {
@@ -292,7 +370,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
                     ),
                   ),
                 )
-              : null,
+          : null,
     );
   }
 

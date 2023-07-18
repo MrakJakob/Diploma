@@ -88,6 +88,7 @@ class MapCommand extends BaseCommand {
     mapModel.setSelectedFunctionality = "record";
     mapModel.tourPlanningContainerVisible = false;
     mapModel.recordingContainerVisible = true;
+    plannedTourModel.setAddMarkers = false;
   }
 
   void hideRecordingContainer() {
@@ -95,14 +96,22 @@ class MapCommand extends BaseCommand {
     mapModel.recordingContainerVisible = false;
   }
 
-  void showTourPlanningContainer() {
-    mapModel.setSelectedFunctionality = "plan";
-    mapModel.recordingContainerVisible = false;
+  void showTourPlanningContainer(String faze) {
+    if (faze == "start") {
+      mapModel.setSelectedFunctionality = "plan";
+      mapModel.recordingContainerVisible = false;
+      plannedTourModel.setAddMarkers = true;
+    }
+
     mapModel.tourPlanningContainerVisible = true;
   }
 
-  void hideTourPlanningContainer() {
-    mapModel.setSelectedFunctionality = "none";
+  void hideTourPlanningContainer(String faze) {
+    if (faze == "end") {
+      mapModel.setSelectedFunctionality = "none";
+      plannedTourModel.setAddMarkers = false;
+    }
+
     mapModel.tourPlanningContainerVisible = false;
   }
 
@@ -259,7 +268,7 @@ class MapCommand extends BaseCommand {
 
   Future<void> stopTourPlanning() async {
     await MapCommand().clearMap();
-    MapCommand().hideTourPlanningContainer();
+    MapCommand().hideTourPlanningContainer("end");
   }
 
   Future<void> showRecordedActivityMarker(

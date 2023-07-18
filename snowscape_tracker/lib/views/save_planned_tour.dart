@@ -21,7 +21,7 @@ class SavePlannedTourState extends State<SavePlannedTour> {
         SnackBarWidget.show("Tour saved successfully", Colors.green);
         PlannedTourCommand().stopTourPlanning();
         await MapCommand().clearMap();
-        MapCommand().hideTourPlanningContainer();
+        MapCommand().hideTourPlanningContainer("end");
         return;
       }
       return;
