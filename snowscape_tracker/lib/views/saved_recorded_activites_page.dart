@@ -55,7 +55,8 @@ class _SavedRecordedActivitiesPageState
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => RecordedActivityDetails(
-                            recordedActivity.data![index]),
+                            recordedActivity.data![index],
+                            "private_from_saved_tours"),
                       ),
                     );
                   },
