@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:snowscape_tracker/commands/map_command.dart';
 import 'package:snowscape_tracker/data/recorded_activity.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:snowscape_tracker/helpers/formating.dart';
+import 'package:snowscape_tracker/widgets/small_map_with_recorded_activity.dart';
 
 class RecordedActivityDetails extends StatefulWidget {
   final RecordedActivity recordedActivity;
+  final String type;
 
   const RecordedActivityDetails(
-    this.recordedActivity, {
+    this.recordedActivity,
+    this.type, {
     Key? key,
   }) : super(key: key);
 
@@ -22,6 +26,7 @@ class _RecordedActivityDetailsState extends State<RecordedActivityDetails> {
   @override
   Widget build(BuildContext context) {
     RecordedActivity recordedActivity = widget.recordedActivity;
+    bool showMap = widget.type == "private_from_saved_tours";
 
     return Scaffold(
         appBar: AppBar(
@@ -165,8 +170,20 @@ class _RecordedActivityDetailsState extends State<RecordedActivityDetails> {
                   ),
                 ],
               ),
+              const SizedBox(height: 30),
+              showMap
+                  ? SmallMapWithRecordedActivity(recordedActivity.points)
+                  : Container(),
             ],
           ),
         )));
+  }
+
+  @override
+  void dispose() {
+    if (widget.type == "private_from_saved_tours") {
+      MapCommand().resetController();
+    }
+    super.dispose();
   }
 }

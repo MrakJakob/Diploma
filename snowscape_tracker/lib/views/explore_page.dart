@@ -153,8 +153,8 @@ class _ExplorePageState extends State<ExplorePage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  RecordedActivityDetails(recordedActivity),
+                              builder: (context) => RecordedActivityDetails(
+                                  recordedActivity, "shared_from_explore_page"),
                             ),
                           );
                         },
@@ -266,8 +266,8 @@ class _ExplorePageState extends State<ExplorePage> {
 
   @override
   void dispose() {
-    super.dispose();
     MapCommand()
         .resetController(); // added because the controller was not disposed correctly
+    super.dispose();
   }
 }

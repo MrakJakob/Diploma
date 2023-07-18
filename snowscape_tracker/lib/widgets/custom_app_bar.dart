@@ -38,7 +38,7 @@ class CustomAppBar extends StatelessWidget {
           'Do you want to discard the tour?',
           () async {
             PlannedTourCommand().stopTourPlanning();
-            MapCommand().stopTourPlanning();
+            await MapCommand().stopTourPlanning();
 
             MapCommand().showRecordingContainer();
             Navigator.of(context).pop();
