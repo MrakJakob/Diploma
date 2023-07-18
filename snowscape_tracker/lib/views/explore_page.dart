@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:provider/provider.dart';
@@ -192,17 +193,30 @@ class _ExplorePageState extends State<ExplorePage> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(height: 5),
-                                      Text(
-                                        recordedActivity.userName.isNotEmpty
-                                            ? recordedActivity.userName
-                                            : 'Anonymous',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.white,
+                                      RatingBarIndicator(
+                                        rating: recordedActivity.difficulty
+                                            .toDouble(),
+                                        itemBuilder: (context, index) =>
+                                            const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
+                                        itemCount: 5,
+                                        itemSize: 20.0,
+                                        direction: Axis.horizontal,
                                       ),
+                                      // const SizedBox(height: 5),
+                                      // Text(
+                                      //   recordedActivity.userName.isNotEmpty
+                                      //       ? recordedActivity.userName
+                                      //       : 'Anonymous',
+                                      //   style: const TextStyle(
+                                      //     fontSize: 14,
+                                      //     fontWeight: FontWeight.normal,
+                                      //     color: Colors.white,
+                                      //   ),
+                                      //   overflow: TextOverflow.ellipsis,
+                                      // ),
                                       const SizedBox(height: 5),
                                       Text(
                                           '${recordedActivity.distance.toStringAsFixed(2)} km, ${printDuration(Duration(seconds: recordedActivity.duration), true)}',
