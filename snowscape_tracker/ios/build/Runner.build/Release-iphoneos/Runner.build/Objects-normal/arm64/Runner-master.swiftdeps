@@ -1,0 +1,6 @@
+version: "Apple Swift version 5.5 (swiftlang-1300.0.31.1 clang-1300.0.29.1)"
+options: "c5e9faf95718729560f834c0b791fb948f4567e9eede036b85783ada154dfbda"
+build_start_time: [1691612856, 474411964]
+build_end_time: [1691612869, 892248153]
+inputs:
+  "/Users/jakobmrak/Documents/GitHub/Diploma/snowscape_tracker/ios/Runner/AppDelegate.swift": [1691576878, 398542404]
