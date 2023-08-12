@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
@@ -189,4 +189,31 @@ class RecordActivityCommand extends BaseCommand {
   void setIsPublic(bool isPublic) {
     recordActivityModel.isPublic = isPublic;
   }
+
+  void setDistance(double distance) {
+    recordActivityModel.setDistance = distance;
+  }
+
+  double getDistance() {
+    return recordActivityModel.distance;
+  }
+
+  void setAverageSpeed(double averageSpeed) {
+    recordActivityModel.setAverageSpeed = averageSpeed;
+  }
+
+  int getDuration() {
+    return recordActivityModel.getDuration;
+  }
+
+  double getElevationGain() {
+    return recordActivityModel.getElevationGain;
+  }
+
+  void setElevationGain(double elevationGain) {
+    recordActivityModel.elevationGain = elevationGain;
+  }
 }
+
+
+

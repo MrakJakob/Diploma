@@ -3,15 +3,15 @@ import 'package:flutter_background_geolocation/flutter_background_geolocation.da
     as bg;
 
 class LocationCommand extends BaseCommand {
-  void setCurrentLocation(bg.Location location) async {
+  void setCurrentLocation(bg.Location location) {
     locationModel.currentLocation = location;
   }
 
   Future<void> getCurrentLocation() async {
-    await locationService.setCurrentLocation();
+    await locationService?.setCurrentLocation();
   }
 
   void changeTrackingPace() {
-    locationService.changePace();
+    locationService?.changePace();
   }
 }

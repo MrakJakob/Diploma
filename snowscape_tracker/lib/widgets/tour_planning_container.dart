@@ -119,10 +119,10 @@ class _TourPlanningContainerState extends State<TourPlanningContainer> {
       (model) => model.loadingPathData,
     );
 
-    List<MatchedRule> matchedRules =
-        context.select<PlannedTourModel, List<MatchedRule>>(
-      (model) => model.matchedRules,
-    );
+    // List<MatchedRule>? matchedRules =
+    //     context.select<PlannedTourModel, List<MatchedRule>>(
+    //   (model) => model.matchedRules,
+    // );
 
     bool addMarkers = context.select<PlannedTourModel, bool>(
       (model) => model.addMarkers,

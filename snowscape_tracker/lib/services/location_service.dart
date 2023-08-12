@@ -2,18 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
 import 'package:mapbox_gl/mapbox_gl.dart';
-import 'package:snowscape_tracker/commands/base_command.dart';
+import 'package:snowscape_tracker/commands/location_command.dart';
+import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/data/recording_status.dart';
 import 'package:snowscape_tracker/utils/snack_bar.dart';
-import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:snowscape_tracker/utils/user_preferences.dart';
 
-class LocationService extends BaseCommand {
+class LocationService {
   LocationService() {
     // Fired whenever a location is recorded
     bg.BackgroundGeolocation.onLocation((bg.Location location) {
       debugPrint('[location] - $location');
-      locationModel.currentLocation = location;
+      LocationCommand().setCurrentLocation(location);
       if (UserPreferences.getRecordingStatus() == RecordingStatus.recording) {
         // Save the point to shared preferences in case the app is closed
         UserPreferences.addPathCoordinate(
@@ -78,7 +79,9 @@ class LocationService extends BaseCommand {
         timeout: 30000, // <-- wait 30s before giving up.
         samples: 3, // <-- sample 3 location before selecting best.
       ).then((bg.Location location) {
-        locationModel.currentLocation = location;
+        debugPrint('[getCurrentPosition] - $location');
+        // locationModel.currentLocation = location;
+        LocationCommand().setCurrentLocation(location);
       }).catchError((error) {
         debugPrint('[getCurrentPosition] ERROR: $error');
       });
@@ -89,6 +92,6 @@ class LocationService extends BaseCommand {
     await bg.BackgroundGeolocation.start();
     var state = await bg.BackgroundGeolocation.state;
     await bg.BackgroundGeolocation.changePace(
-        recordActivityModel.getRecordingStatus == RecordingStatus.recording);
+        RecordActivityCommand().recordingStatus() == RecordingStatus.recording);
   }
 }
