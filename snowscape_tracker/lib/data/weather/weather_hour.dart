@@ -91,7 +91,7 @@ class WeatherHour {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS weather_hour (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id INTEGER PRIMARY KEY,
       date INTEGER NOT NULL,
       oblacnost TEXT NOT NULL,
       vremenskiPojav TEXT,

@@ -1,6 +1,12 @@
 import 'package:snowscape_tracker/commands/base_command.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
+    as bg;
 
 class LocationCommand extends BaseCommand {
+  void setCurrentLocation(bg.Location location) async {
+    locationModel.currentLocation = location;
+  }
+
   Future<void> getCurrentLocation() async {
     await locationService.setCurrentLocation();
   }

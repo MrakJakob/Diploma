@@ -51,11 +51,11 @@ import 'package:path/path.dart';
 @pragma('vm:entry-point')
 void headlessTask(bg.HeadlessEvent headlessEvent) async {
   print('[BackgroundGeolocation HeadlessTask]: $headlessEvent');
-  // Implement a 'case' for only those events you're interested in.
+
   switch (headlessEvent.name) {
     case bg.Event.LOCATION:
       bg.Location location = headlessEvent.event;
-      // we need to save the location to the shared preferences when app is in background
+      // we need to save the location to the shared preferences when app is in detached mode
       await UserPreferences.addPathCoordinate(
           LatLng(location.coords.latitude, location.coords.longitude));
       break;
@@ -95,7 +95,7 @@ Future<void> populateDatabase(Database db) async {
     // rule.ruleId = index;
 
     var rule1 = await db.insert(
-      'rules',
+      'rule',
       dbRule.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -286,6 +286,7 @@ class MyApp extends StatelessWidget {
               title: 'Snowscape Tracker',
               scaffoldMessengerKey: SnackBarWidget
                   .messengerKey, // messengerKey is a static property of SnackBarWidget
+              debugShowCheckedModeBanner: false,
               theme: CustomTheme.lightTheme,
               home: MainPage(),
             );

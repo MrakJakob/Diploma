@@ -35,7 +35,7 @@ class AvalancheBulletin {
 
   static createTable() {
     return '''CREATE TABLE IF NOT EXISTS avalanche_bulletin (
-      avBulletinId INTEGER PRIMARY KEY AUTOINCREMENT,
+      avBulletinId INTEGER PRIMARY KEY,
       dangerDescription TEXT,
       snowConditionsTendency TEXT,
       weatherEvolution TEXT,

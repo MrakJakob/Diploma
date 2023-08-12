@@ -99,13 +99,13 @@ class RecordActivityModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  get getDuration => _recordedActivity?.duration ?? 0;
+
   set incrementDuration(int durationSeconds) {
     debugPrint("incrementDuration: $durationSeconds");
     _recordedActivity?.duration += durationSeconds;
     notifyListeners();
   }
-
-  get getDuration => _recordedActivity?.duration ?? 0;
 
   get tourNameController => _tourNameController;
 
