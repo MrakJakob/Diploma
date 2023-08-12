@@ -64,15 +64,10 @@ class LocationService extends BaseCommand {
       await Permission.location.request();
 
       if (await Permission.location.status.isDenied) {
-        await Permission.locationWhenInUse.request();
-
-        if (await Permission.locationWhenInUse.status.isDenied) {
-          await SnackBarWidget.show(
-              'Location permission is required to use this feature', null);
-          await Future.delayed(Duration(seconds: 2));
-
-          await openAppSettings();
-        }
+        await SnackBarWidget.show(
+            'Location permission is required to use this feature', null);
+        await Future.delayed(const Duration(seconds: 2));
+        await openAppSettings();
       }
     }
 
@@ -83,7 +78,6 @@ class LocationService extends BaseCommand {
         timeout: 30000, // <-- wait 30s before giving up.
         samples: 3, // <-- sample 3 location before selecting best.
       ).then((bg.Location location) {
-        debugPrint('[getCurrentPosition] - $location');
         locationModel.currentLocation = location;
       }).catchError((error) {
         debugPrint('[getCurrentPosition] ERROR: $error');

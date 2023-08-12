@@ -39,19 +39,14 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
 
     // we need to check if the user has already started recording an activity before
-    // var isRecording = UserPreferences.getRecording();
-
     // if the user has started recording an activity before, we need to load the recorded path
     if (UserPreferences.getRecordingStatus() != RecordingStatus.idle) {
       RecordActivityCommand()
           .recoverRecordedActivityFromSharedPreferences()
           .then((path) {
-        debugPrint("path recovered from shared preferences: $path");
-
         // change the tracking pace to make sure that we are tracking the user's location often enough
         LocationCommand().changeTrackingPace();
 
-        // we need to set the path to the map model
         if (path == null) return;
         setState(() {
           // if we have a path, we need to set the path to the map model when the map page is loaded
@@ -64,37 +59,25 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
-    debugPrint('AppLifecycleState changed');
-    if (state == AppLifecycleState.inactive ||
-        state == AppLifecycleState.detached) return;
 
     if (state == AppLifecycleState.resumed) {
       // when app is resumed we need to recover the path drawn in the meantime
 
       var path = await UserPreferences.getPathCoordinates();
       if (path.isNotEmpty) {
-        debugPrint("path recovered from shared preferences: $path");
         RecordActivityCommand().recordActivityModel.setPoints = path;
         await MapCommand().updatePolyline(path, "recorded", null);
       }
     }
 
-    final isBackground = state == AppLifecycleState.paused;
-
-    if (isBackground) {
-      // if the app is going to background
-      // final isRecording = UserPreferences.getRecording();
+    if (state == AppLifecycleState.paused) {
+      // app is going to background
       final isRecording =
           UserPreferences.getRecordingStatus() != RecordingStatus.idle;
 
       if (isRecording) {
         // save the elapsed time to shared preferences
         await RecordActivityCommand().saveElapsedTimeToSharedPreferences();
-
-        var oldpath = RecordActivityCommand().recordActivityModel.points;
-        debugPrint("path before app went to background: $oldpath");
-        // if we are recording an activity, we want to save the recorded path to user preferences
-        // RecordActivityCommand().saveRecordedActivityToSharedPreferences();
       }
     }
   }

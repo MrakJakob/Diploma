@@ -42,7 +42,7 @@ class MapCommand extends BaseCommand {
                 ? '#FF0000'
                 : '#000000';
     while (mapController.lineManager == null) {
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
     }
 
     mapController.lineManager != null

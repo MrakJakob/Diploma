@@ -27,19 +27,14 @@ class GeoPropertiesCalculator {
   double calculateSlopeWithElevation(
       ContextPoint point1, ContextPoint point2, ContextPoint point3) {
     // Calculate the change in elevation between point1 and point3
-    final dElevation1 = point2.elevation - point1.elevation;
-    final dElevation2 = point3.elevation - point2.elevation;
+    final dElevation = point3.elevation - point1.elevation;
 
     // Calculate the distance between point1 and point3
-    final distance = calculateDistanceHaversine(point1.point, point2.point) *
+    final distance = calculateDistanceHaversine(point1.point, point3.point) *
         1000; // convert to meters *1000
 
-    // Interpolate the elevation at the midpoint between p1 and p3
-    final midpointElevation = point1.elevation +
-        (distance / 2) * (dElevation1 + dElevation2) / (2 * distance);
-
     // Calculate the slope
-    final slope = (midpointElevation - point1.elevation) / (distance / 2);
+    final slope = dElevation / distance;
     final slopeDegrees = atan(slope) * (180 / pi);
 
     return slopeDegrees;

@@ -62,8 +62,8 @@ class Rule {
   }
 
   static createTable() {
-    return '''CREATE TABLE IF NOT EXISTS rules (
-      ruleId INTEGER PRIMARY KEY AUTOINCREMENT,
+    return '''CREATE TABLE IF NOT EXISTS rule (
+      ruleId INTEGER PRIMARY KEY,
       aspect TEXT,
       minSlope REAL,
       maxSlope REAL,

@@ -95,12 +95,6 @@ class _ExplorePageState extends State<ExplorePage> {
         if (recordedActivities != null) {
           for (var recordedActivity in recordedActivities) {
             if (recordedActivity.points.isNotEmpty && currentLocation != null) {
-              //  &&
-              // GeoPropertiesCalculator().calculateDistanceHaversine(
-              //         recordedActivity.points[0],
-              //         LatLng(currentLocation.coords.latitude,
-              //             currentLocation.coords.longitude)) <
-              //     100
               await MapCommand().showRecordedActivityMarker(recordedActivity);
             }
           }

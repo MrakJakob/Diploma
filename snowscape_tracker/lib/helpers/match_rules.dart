@@ -100,7 +100,7 @@ Future<List<RuleWithLists>> rules(Database db) async {
 
   // We get the rules from the database
   List<Map<String, dynamic>> rules =
-      (await db.query('rules', where: 'userHiking'));
+      (await db.query('rule', where: 'userHiking'));
 
   // Weather descriptions
   List<Map<String, dynamic>> dbWeatherDescriptions =

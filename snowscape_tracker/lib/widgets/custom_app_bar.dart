@@ -112,6 +112,21 @@ class CustomAppBar extends StatelessWidget {
           Flexible(
             flex: 1,
             fit: FlexFit.loose,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image(
+                  image: AssetImage('assets/mountain.png'),
+                  width: 38,
+                  height: 38,
+                  color: Colors.white.withOpacity(0.7),
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
             child: GestureDetector(
               onTap: () {
                 showRecordingContainer();
@@ -139,28 +154,28 @@ class CustomAppBar extends StatelessWidget {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              LogoutCommand().execute();
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  TablerIcons.logout,
-                  color: Colors.white.withOpacity(0.7),
-                  size: 28,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'Log out',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () {
+          //     LogoutCommand().execute();
+          //   },
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Icon(
+          //         TablerIcons.logout,
+          //         color: Colors.white.withOpacity(0.7),
+          //         size: 28,
+          //       ),
+          //       SizedBox(height: 5),
+          //       Text(
+          //         'Log out',
+          //         style: TextStyle(
+          //           color: Colors.white.withOpacity(0.7),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

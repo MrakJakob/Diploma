@@ -4,8 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
+import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/helpers/geo_properties_calculator.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 
 class ContextPoint {
   LatLng point;
@@ -91,13 +93,19 @@ class ArcGISService extends BaseCommand {
       )
           .then((value) async {
         debugPrint("Value: $value");
+        var index = 0;
         while (value.data['jobStatus'] != "esriJobSucceeded") {
           if (value.data['jobStatus'] == "esriJobFailed") {
+            SnackBarWidget.show("Failed to get elevation data", Colors.red);
+            return false;
+          } else if (index > 30) {
+            SnackBarWidget.show("Failed to get elevation data", Colors.red);
             return false;
           }
           sleep(Duration(seconds: 1));
           var newValue = await dio.get(url, queryParameters: parameters);
           value = newValue;
+          index++;
         }
         response = true;
       });
@@ -405,7 +413,7 @@ class ArcGISService extends BaseCommand {
 
     while (newPoints.isNotEmpty) {
       // if we have more than 1000 points, we need to split them into multiple requests, because the API can only handle 1000 points at a time
-      newPoints = points.length > 1000 ? points.sublist(0, 1000) : points;
+      newPoints = points.length > 350 ? points.sublist(0, 350) : points;
 
       final response = await submitJobNew(newPoints);
       if (response != null &&
