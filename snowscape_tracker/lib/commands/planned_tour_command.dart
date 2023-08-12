@@ -11,6 +11,7 @@ import 'package:snowscape_tracker/data/planned_tour.dart';
 import 'package:snowscape_tracker/data/rules/matched_rule.dart';
 import 'package:snowscape_tracker/helpers/directions_handler.dart';
 import 'package:snowscape_tracker/helpers/match_rules.dart';
+import 'package:snowscape_tracker/services/arcGIS_service.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -106,7 +107,7 @@ class PlannedTourCommand extends BaseCommand {
     plannedTourModel.setPlannedTourTime = date;
   }
 
-  DateTime getPlannedTourTime() {
+  DateTime? getPlannedTourTime() {
     return plannedTourModel.plannedTourTime;
   }
 
@@ -386,5 +387,21 @@ class PlannedTourCommand extends BaseCommand {
 
   void setAddMarkers(bool addMarkers) {
     plannedTourModel.setAddMarkers = addMarkers;
+  }
+
+  void setContextPoints(List<ContextPoint> contextPoints) {
+    plannedTourModel.setContextPoints = contextPoints;
+  }
+
+  List<ContextPoint> getContextPoints() {
+    return plannedTourModel.contextPoints;
+  }
+
+  void setTotalElevationGain(double elevation) {
+    plannedTourModel.setTotalElevationGain = elevation;
+  }
+
+  double getTotalElevationGain() {
+    return plannedTourModel.totalElevationGain;
   }
 }

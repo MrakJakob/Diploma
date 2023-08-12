@@ -4,8 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
+import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/commands/record_activity_command.dart';
 import 'package:snowscape_tracker/helpers/geo_properties_calculator.dart';
+import 'package:snowscape_tracker/utils/snack_bar.dart';
 
 class ContextPoint {
   LatLng point;
@@ -18,7 +20,7 @@ class ContextPoint {
       this.distanceFromStart);
 }
 
-class ArcGISService extends BaseCommand {
+class ArcGISService {
   final dio = Dio();
 
   List<List> formatPoints(List<LatLng> points) {
@@ -91,13 +93,19 @@ class ArcGISService extends BaseCommand {
       )
           .then((value) async {
         debugPrint("Value: $value");
+        var index = 0;
         while (value.data['jobStatus'] != "esriJobSucceeded") {
           if (value.data['jobStatus'] == "esriJobFailed") {
+            SnackBarWidget.show("Failed to get elevation data", Colors.red);
+            return false;
+          } else if (index > 30) {
+            SnackBarWidget.show("Failed to get elevation data", Colors.red);
             return false;
           }
-          sleep(Duration(seconds: 1));
+          // sleep(Duration(seconds: 1));
           var newValue = await dio.get(url, queryParameters: parameters);
           value = newValue;
+          index++;
         }
         response = true;
       });
@@ -365,17 +373,26 @@ class ArcGISService extends BaseCommand {
             return;
           }
 
-          plannedTourModel.setContextPoints = [
-            ...plannedTourModel.contextPoints,
-            ...contextPoints
-          ];
+          // plannedTourModel.setContextPoints = [
+          //   ...plannedTourModel.contextPoints,
+          //   ...contextPoints
+          // ];
+
+          List<ContextPoint> prevContextPoints =
+              PlannedTourCommand().getContextPoints();
+          PlannedTourCommand()
+              .setContextPoints([...prevContextPoints, ...contextPoints]);
 
           double totalElevationGain =
               GeoPropertiesCalculator().calculateElevationGain(contextPoints);
 
           // we have to add the elevation gain to the total elevation gain of the tour in case we have more than 1000 points
-          plannedTourModel.setTotalElevationGain =
-              plannedTourModel.totalElevationGain + totalElevationGain;
+          // plannedTourModel.setTotalElevationGain =
+          //     plannedTourModel.totalElevationGain + totalElevationGain;
+
+          PlannedTourCommand().setTotalElevationGain(
+              PlannedTourCommand().getTotalElevationGain() +
+                  totalElevationGain);
         }
       }
       path.removeRange(0, newRoute.length);
@@ -383,16 +400,23 @@ class ArcGISService extends BaseCommand {
     // we recalculate the duration of the tour using the Munter's method
     // and we also include routes that were not generated using the
     // directions API, but were drawn as straight lines between points by the user
-    double approximateSkiTourDuration = GeoPropertiesCalculator()
-        .getApproximateDuration(plannedTourModel.contextPoints);
+    List<ContextPoint> contextPoints = PlannedTourCommand().getContextPoints();
 
-    plannedTourModel.setDuration = approximateSkiTourDuration;
+    if (contextPoints.isEmpty) {
+      return;
+    }
+    double approximateSkiTourDuration =
+        GeoPropertiesCalculator().getApproximateDuration(contextPoints);
 
+    // plannedTourModel.setDuration = approximateSkiTourDuration;
+    PlannedTourCommand().setDuration(approximateSkiTourDuration);
     // we set the distance of the tour to the distance of the context point which
     // includes the points that were not generated using the directions API,
     // but were drawn as straight lines between points by the user
-    plannedTourModel.setDistance =
-        plannedTourModel.contextPoints.last.distanceFromStart;
+    // plannedTourModel.setDistance =
+    //     plannedTourModel.contextPoints.last.distanceFromStart;
+
+    PlannedTourCommand().setDistance(contextPoints.last.distanceFromStart);
   }
 
   Future<void> getRecordedPathElevationAndRecalculateDistance(
@@ -405,7 +429,7 @@ class ArcGISService extends BaseCommand {
 
     while (newPoints.isNotEmpty) {
       // if we have more than 1000 points, we need to split them into multiple requests, because the API can only handle 1000 points at a time
-      newPoints = points.length > 1000 ? points.sublist(0, 1000) : points;
+      newPoints = points.length > 350 ? points.sublist(0, 350) : points;
 
       final response = await submitJobNew(newPoints);
       if (response != null &&
@@ -422,17 +446,28 @@ class ArcGISService extends BaseCommand {
           }
 
           // We need to recalculate distance because the distance and avg. speed calculated during recording is not accurate
-          recordActivityModel.setDistance =
-              contextPoints.last.distanceFromStart;
-          recordActivityModel.setAverageSpeed = recordActivityModel.distance /
-              (recordActivityModel.getDuration / 3600);
+          // recordActivityModel.setDistance =
+          //     contextPoints.last.distanceFromStart / 1000; // in km
+
+          RecordActivityCommand().setDistance(
+              contextPoints.last.distanceFromStart / 1000); // in km
+
+          // recordActivityModel.setAverageSpeed = recordActivityModel.distance /
+          //     (recordActivityModel.getDuration / 3600);
+
+          RecordActivityCommand().setAverageSpeed(
+              RecordActivityCommand().getDistance() /
+                  (RecordActivityCommand().getDuration() / 3600));
 
           double totalElevationGain =
               GeoPropertiesCalculator().calculateElevationGain(contextPoints);
 
           // we need to add the elevation gain to the total elevation gain in case we have more than 1000 points
-          recordActivityModel.elevationGain =
-              recordActivityModel.getElevationGain + totalElevationGain;
+          // recordActivityModel.elevationGain =
+          //     recordActivityModel.getElevationGain + totalElevationGain;
+
+          RecordActivityCommand().setElevationGain(
+              RecordActivityCommand().getElevationGain() + totalElevationGain);
         }
       }
       // remove the points that were already processed
@@ -440,3 +475,5 @@ class ArcGISService extends BaseCommand {
     }
   }
 }
+
+

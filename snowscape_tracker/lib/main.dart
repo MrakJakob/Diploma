@@ -193,11 +193,12 @@ Future<void> deleteDatabase(String path) =>
     databaseFactory.deleteDatabase(path);
 
 Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await UserPreferences.init();
   await dotenv.load(fileName: ".env");
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   // await deleteDatabase(join(await getDatabasesPath(), 'rules_database.db'));
   final database = await openDatabase(
@@ -273,11 +274,11 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (_) => ProfileModel()),
           ChangeNotifierProvider(create: (_) => PlannedTourModel()),
           Provider(create: (_) => UserService()),
-          Provider(create: (_) => LocationService()),
           Provider(create: (_) => RecordActivityService()),
           Provider(create: (_) => MapboxService()),
           Provider(create: (_) => ArcGISService()),
           Provider(create: (_) => ArsoWeatherService()),
+          Provider(create: (_) => LocationService()),
         ],
         child: Builder(
           builder: (context) {
@@ -287,6 +288,7 @@ class MyApp extends StatelessWidget {
               scaffoldMessengerKey: SnackBarWidget
                   .messengerKey, // messengerKey is a static property of SnackBarWidget
               theme: CustomTheme.lightTheme,
+              debugShowCheckedModeBanner: false,
               home: MainPage(),
             );
           },

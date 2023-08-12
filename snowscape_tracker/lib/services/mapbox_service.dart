@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
+import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/helpers/geo_properties_calculator.dart';
 import 'package:snowscape_tracker/services/arcGIS_service.dart';
 
-class MapboxService extends BaseCommand {
+class MapboxService {
   // Direction API
   String baseUrl = 'https://api.mapbox.com/directions/v5/mapbox';
   String? accessToken = dotenv.env['MAPBOX_ACCESS_TOKEN'];
@@ -113,7 +114,8 @@ class MapboxService extends BaseCommand {
     // contextPoints = removeUniformativePoints(contextPoints);
 
     // save the context points to the model
-    plannedTourModel.setContextPoints = contextPoints;
+    // plannedTourModel.setContextPoints = contextPoints;
+    PlannedTourCommand().setContextPoints(contextPoints);
     debugPrint(
         "${contextPoints.map((e) => "Slope: ${e.slope} aspect: ${e.aspect}")}");
     return totalElevationGain;
