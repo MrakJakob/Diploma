@@ -212,8 +212,8 @@
       "hour_max": null,
       "user_hiking": true,
       "av_area_id": null,
-      "notification_name": "MOKER SNEG",
-      "notification_text": "Plazovni problem se pojavi zaradi vode, ki pronica v snežno odejo in oslabi povezavo med plastmi. Predhodni znaki so začetek dežnih padavin, valjenje snežnih kep na pobočjih, globoko udiranje v snežno odejo in manjši plazovi mokrega snega. Treba je biti pazljiv na območju zaustavljanja plazov.",
+      "notification_name": "WET SNOW",
+      "notification_text": "Avalanche problems arise due to water infiltrating the snowpack, weakening the bond between layers. Early signs include the onset of rain, rolling snowballs on slopes, deep penetration into the snowpack, and smaller wet snow avalanches. Caution must be exercised in avalanche runout zones.",
       "weather_descriptions": [],
       "problems": [
         {
