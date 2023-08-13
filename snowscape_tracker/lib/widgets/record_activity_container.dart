@@ -130,8 +130,8 @@ class _RecordActivityContainerState extends State<RecordActivityContainer> {
       UserPreferences.clearRecordedActivity();
     }
 
-    void resumeRecording() {
-      RecordActivityCommand().resumeRecording();
+    void resumeRecording() async {
+      await RecordActivityCommand().resumeRecording();
       LocationCommand().changeTrackingPace();
       timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         RecordActivityCommand().incrementActivityDuration();

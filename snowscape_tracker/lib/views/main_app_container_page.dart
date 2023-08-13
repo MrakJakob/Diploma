@@ -58,82 +58,94 @@ class MainAppContainerPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            GestureDetector(
-              onTap: () {
-                setSelectedPage(0);
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    TablerIcons.compass,
-                    size: 28,
-                    color: selectedPageIndex == 0
-                        ? Theme.of(context).secondaryHeaderColor
-                        : Colors.white.withOpacity(0.7),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    'Map',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: selectedPageIndex == 0
-                              ? Theme.of(context).secondaryHeaderColor
-                              : Colors.white.withOpacity(0.7),
-                        ),
-                  ),
-                ],
+            Flexible(
+              flex: 2,
+              fit: FlexFit.tight,
+              child: GestureDetector(
+                onTap: () {
+                  setSelectedPage(0);
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      TablerIcons.compass,
+                      size: 28,
+                      color: selectedPageIndex == 0
+                          ? Theme.of(context).secondaryHeaderColor
+                          : Colors.white.withOpacity(0.7),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Map',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: selectedPageIndex == 0
+                                ? Theme.of(context).secondaryHeaderColor
+                                : Colors.white.withOpacity(0.7),
+                          ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                setSelectedPage(1);
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    TablerIcons.search,
-                    size: 28,
-                    color: selectedPageIndex == 1
-                        ? Theme.of(context).secondaryHeaderColor
-                        : Colors.white.withOpacity(0.7),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    'Explore',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: selectedPageIndex == 1
-                              ? Theme.of(context).secondaryHeaderColor
-                              : Colors.white.withOpacity(0.7),
-                        ),
-                  ),
-                ],
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: GestureDetector(
+                onTap: () {
+                  setSelectedPage(1);
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      TablerIcons.search,
+                      size: 28,
+                      color: selectedPageIndex == 1
+                          ? Theme.of(context).secondaryHeaderColor
+                          : Colors.white.withOpacity(0.7),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Explore',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: selectedPageIndex == 1
+                                ? Theme.of(context).secondaryHeaderColor
+                                : Colors.white.withOpacity(0.7),
+                          ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            GestureDetector(
-              onTap: () {
-                setSelectedPage(2);
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    TablerIcons.user_circle,
-                    size: 28,
-                    color: selectedPageIndex == 2
-                        ? Theme.of(context).secondaryHeaderColor
-                        : Colors.white.withOpacity(0.7),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    'Profile',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: selectedPageIndex == 2
-                              ? Theme.of(context).secondaryHeaderColor
-                              : Colors.white.withOpacity(0.7),
-                        ),
-                  ),
-                ],
+            Flexible(
+              flex: 2,
+              fit: FlexFit.tight,
+              child: GestureDetector(
+                onTap: () {
+                  setSelectedPage(2);
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      TablerIcons.user_circle,
+                      size: 28,
+                      color: selectedPageIndex == 2
+                          ? Theme.of(context).secondaryHeaderColor
+                          : Colors.white.withOpacity(0.7),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Profile',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: selectedPageIndex == 2
+                                ? Theme.of(context).secondaryHeaderColor
+                                : Colors.white.withOpacity(0.7),
+                          ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
