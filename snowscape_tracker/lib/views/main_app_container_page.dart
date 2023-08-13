@@ -53,7 +53,7 @@ class MainAppContainerPage extends StatelessWidget {
     return Scaffold(
       body: selectedPage,
       bottomNavigationBar: BottomAppBar(
-        height: 70,
+        height: 90,
         color: Theme.of(context).primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -7,14 +7,14 @@ import 'package:xml/xml.dart';
 Future<List<WeatherHour>> weatherXmlParser(String input, Database db) async {
   final document = XmlDocument.parse(input);
 
-  List<WeatherHour> weatherHourList = [];
+  // List<WeatherHour> weatherHourList = [];
   DateFormat dateFormat = DateFormat('dd.MM.yyyy HH:mm');
 
-  String datum = "11.06.2023 8:00 CEST";
-  // DateTime date = dateFormat.parse(datum.replaceAll(" CEST", ""));
-  final brut = document.findAllElements('metData').length;
+  // String datum = "11.06.2023 8:00 CEST";
+  // // DateTime date = dateFormat.parse(datum.replaceAll(" CEST", ""));
+  // final brut = document.findAllElements('metData').length;
 
-  var completer = Completer<List<WeatherHour>>();
+  // var completer = Completer<List<WeatherHour>>();
   int i = 0;
   List<WeatherHour> w = document.findAllElements('metData').map((element) {
     //
@@ -38,32 +38,32 @@ Future<List<WeatherHour>> weatherXmlParser(String input, Database db) async {
           element.findElements('t_level_1000_m').single.innerText.toString()),
       t500: int.parse(
           element.findElements('t_level_500_m').single.innerText.toString()),
-      w3000: int.parse(element
+      w3000: double.parse(element
           .findElements('ffVal_level_3000_m')
           .single
           .innerText
           .toString()),
-      w2500: int.parse(element
+      w2500: double.parse(element
           .findElements('ffVal_level_2500_m')
           .single
           .innerText
           .toString()),
-      w2000: int.parse(element
+      w2000: double.parse(element
           .findElements('ffVal_level_2000_m')
           .single
           .innerText
           .toString()),
-      w1500: int.parse(element
+      w1500: double.parse(element
           .findElements('ffVal_level_1500_m')
           .single
           .innerText
           .toString()),
-      w1000: int.parse(element
+      w1000: double.parse(element
           .findElements('ffVal_level_1000_m')
           .single
           .innerText
           .toString()),
-      w500: int.parse(element
+      w500: double.parse(element
           .findElements('ffVal_level_500_m')
           .single
           .innerText

@@ -1,5 +1,5 @@
 class AvalancheType {
-  int sAvalancheTypeId;
+  int? sAvalancheTypeId;
 
   AvalancheType({
     required this.sAvalancheTypeId,
