@@ -7,6 +7,7 @@ import 'package:snowscape_tracker/commands/planned_tour_command.dart';
 import 'package:snowscape_tracker/helpers/alert_dialog.dart';
 import 'package:snowscape_tracker/models/app_model.dart';
 import 'package:snowscape_tracker/models/planned_tour_model.dart';
+import 'dart:io' show Platform;
 
 class MainAppContainerPage extends StatelessWidget {
   const MainAppContainerPage({super.key});
@@ -53,7 +54,7 @@ class MainAppContainerPage extends StatelessWidget {
     return Scaffold(
       body: selectedPage,
       bottomNavigationBar: BottomAppBar(
-        height: 90,
+        height: Platform.isIOS ? 90 : 70,
         color: Theme.of(context).primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

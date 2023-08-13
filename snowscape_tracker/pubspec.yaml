@@ -51,7 +51,12 @@ dependencies:
   loader_overlay: ^2.2.0
   connectivity_plus: ^4.0.1
   permission_handler: ^10.4.3
-  
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/mountain.png"
 
 flutter_native_splash:
   color: "#1dd4ce"
