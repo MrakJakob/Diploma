@@ -122,7 +122,7 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
                           const SizedBox(
                             height: 10,
                           ),
-                          TextField(
+                          TextFormField(
                             controller:
                                 RecordActivityCommand().tourNameController(),
                             decoration: const InputDecoration(
@@ -169,6 +169,7 @@ class _SaveRecordedActivityPageState extends State<SaveRecordedActivityPage> {
                               contentPadding: EdgeInsets.all(10.0),
                             ),
                             style: Theme.of(context).textTheme.bodyLarge,
+                            maxLines: null,
                           ),
                         ],
                       ),

@@ -11,12 +11,12 @@ class WeatherHour {
   int t2500;
   int t3000;
   int snowLimit;
-  int w500;
-  int w1000;
-  int w1500;
-  int w2000;
-  int w2500;
-  int w3000;
+  double w500;
+  double w1000;
+  double w1500;
+  double w2000;
+  double w2500;
+  double w3000;
   String area;
 
   WeatherHour({

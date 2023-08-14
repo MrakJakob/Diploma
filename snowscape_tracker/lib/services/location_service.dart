@@ -90,8 +90,8 @@ class LocationService {
 
   void changePace() async {
     await bg.BackgroundGeolocation.start();
-    var state = await bg.BackgroundGeolocation.state;
-    await bg.BackgroundGeolocation.changePace(
-        RecordActivityCommand().recordingStatus() == RecordingStatus.recording);
+    // var state = await bg.BackgroundGeolocation.state;
+    var status = RecordActivityCommand().recordingStatus();
+    await bg.BackgroundGeolocation.changePace(status);
   }
 }

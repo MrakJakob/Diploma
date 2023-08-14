@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:snowscape_tracker/commands/logout_command.dart';
 import 'package:snowscape_tracker/commands/profile_command.dart';
 import 'package:snowscape_tracker/models/profile_model.dart';
 import 'package:snowscape_tracker/views/saved_planned_tours_page.dart';
@@ -29,6 +30,27 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
         ),
+        actions: <Widget>[
+          PopupMenuButton<int>(
+            onSelected: (item) => {
+              if (item == 0)
+                {
+                  LogoutCommand().execute(),
+                }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('Logout'),
+                      Icon(Icons.logout, color: Colors.black),
+                    ],
+                  )),
+            ],
+          ),
+        ],
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Column(children: [

@@ -11,6 +11,7 @@ import 'package:snowscape_tracker/models/map_model.dart';
 import 'package:snowscape_tracker/models/planned_tour_model.dart';
 import 'package:snowscape_tracker/models/record_activity_model.dart';
 import 'package:snowscape_tracker/utils/user_preferences.dart';
+import 'package:snowscape_tracker/views/instructions_page.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key});
@@ -55,8 +56,7 @@ class CustomAppBar extends StatelessWidget {
     }
 
     void showTourPlanningContainer() {
-      if (recordingStatus == RecordingStatus.recording ||
-          recordingStatus == RecordingStatus.paused) {
+      if (recordingStatus != RecordingStatus.idle) {
         showAlertDialog(
           context,
           'You are currently recording a tour',
@@ -83,50 +83,61 @@ class CustomAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          GestureDetector(
-            onTap: () {
-              showTourPlanningContainer();
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  TablerIcons.route,
-                  color: selectedFunctionality == 'plan'
-                      ? Theme.of(context).secondaryHeaderColor
-                      : Colors.white.withOpacity(0.7),
-                  size: 28,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'Plan',
-                  style: TextStyle(
+          Flexible(
+            flex: 2,
+            fit: FlexFit.tight,
+            child: GestureDetector(
+              onTap: () {
+                showTourPlanningContainer();
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    TablerIcons.route,
                     color: selectedFunctionality == 'plan'
                         ? Theme.of(context).secondaryHeaderColor
                         : Colors.white.withOpacity(0.7),
+                    size: 28,
                   ),
-                ),
-              ],
+                  SizedBox(height: 5),
+                  Text(
+                    'Plan',
+                    style: TextStyle(
+                      color: selectedFunctionality == 'plan'
+                          ? Theme.of(context).secondaryHeaderColor
+                          : Colors.white.withOpacity(0.7),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Flexible(
             flex: 1,
-            fit: FlexFit.loose,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image(
-                  image: AssetImage('assets/mountain.png'),
-                  width: 38,
-                  height: 38,
-                  color: Colors.white.withOpacity(0.7),
-                ),
-              ],
+            fit: FlexFit.tight,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => InstructionsPage(),
+                ));
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    image: AssetImage('assets/mountain.png'),
+                    width: 38,
+                    height: 38,
+                    color: Colors.white.withOpacity(0.7),
+                  ),
+                ],
+              ),
             ),
           ),
           Flexible(
-            flex: 1,
-            fit: FlexFit.loose,
+            flex: 2,
+            fit: FlexFit.tight,
             child: GestureDetector(
               onTap: () {
                 showRecordingContainer();

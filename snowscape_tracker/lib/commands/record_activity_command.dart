@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:snowscape_tracker/commands/base_command.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
@@ -31,7 +31,7 @@ class RecordActivityCommand extends BaseCommand {
         RecordingStatus.recording; // return the recording status
   }
 
-  void resumeRecording() async {
+  Future<void> resumeRecording() async {
     recordActivityModel.recordingStatus = RecordingStatus.recording;
 
     await UserPreferences.setRecording(RecordingStatus.recording);
@@ -214,6 +214,3 @@ class RecordActivityCommand extends BaseCommand {
     recordActivityModel.elevationGain = elevationGain;
   }
 }
-
-
-
