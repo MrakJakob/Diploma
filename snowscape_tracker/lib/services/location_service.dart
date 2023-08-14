@@ -13,24 +13,13 @@ class LocationService {
   LocationService() {
     // Fired whenever a location is recorded
     bg.BackgroundGeolocation.onLocation((bg.Location location) {
-      debugPrint('[location] - $location');
+      // debugPrint('[location] - $location');
       LocationCommand().setCurrentLocation(location);
       if (UserPreferences.getRecordingStatus() == RecordingStatus.recording) {
         // Save the point to shared preferences in case the app is closed
         UserPreferences.addPathCoordinate(
             LatLng(location.coords.latitude, location.coords.longitude));
       }
-    });
-
-    // Fired whenever the plugin changes motion-state (stationary->moving and vice-versa)
-    bg.BackgroundGeolocation.onMotionChange((bg.Location location) {
-      debugPrint('[motionchange] - $location');
-      // locationModel.currentLocation = location;
-    });
-
-    // Fired whenever the state of location-services changes.  Always fired at boot
-    bg.BackgroundGeolocation.onProviderChange((bg.ProviderChangeEvent event) {
-      debugPrint('[providerchange] - $event');
     });
 
     ////
@@ -42,8 +31,8 @@ class LocationService {
             enableHeadless: true,
             stopOnTerminate: false,
             startOnBoot: true,
-            debug: true,
-            logLevel: bg.Config.LOG_LEVEL_VERBOSE))
+            debug: false,
+            logLevel: bg.Config.LOG_LEVEL_ERROR))
         .then((bg.State state) async {
       if (!state.enabled) {
         var status = await Permission.location.status;
@@ -79,8 +68,6 @@ class LocationService {
         timeout: 30000, // <-- wait 30s before giving up.
         samples: 3, // <-- sample 3 location before selecting best.
       ).then((bg.Location location) {
-        debugPrint('[getCurrentPosition] - $location');
-        // locationModel.currentLocation = location;
         LocationCommand().setCurrentLocation(location);
       }).catchError((error) {
         debugPrint('[getCurrentPosition] ERROR: $error');
