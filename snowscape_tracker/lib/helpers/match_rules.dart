@@ -215,12 +215,12 @@ Future<List<MatchedRule>> matchRules(
 
       // We check if the slope of the point is in the range of the rule
       double? minSlope = rule.rule.minSlope;
-      if (minSlope != null && approximateRoute[i].slope < minSlope) {
+      if (minSlope != null && approximateRoute[i].slope.abs() < minSlope) {
         isMatched = false;
       }
 
       double? maxSlope = rule.rule.maxSlope;
-      if (maxSlope != null && approximateRoute[i].slope > maxSlope) {
+      if (maxSlope != null && approximateRoute[i].slope.abs() > maxSlope) {
         isMatched = false;
       }
 

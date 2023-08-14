@@ -56,8 +56,7 @@ class CustomAppBar extends StatelessWidget {
     }
 
     void showTourPlanningContainer() {
-      if (recordingStatus == RecordingStatus.recording ||
-          recordingStatus == RecordingStatus.paused) {
+      if (recordingStatus != RecordingStatus.idle) {
         showAlertDialog(
           context,
           'You are currently recording a tour',
