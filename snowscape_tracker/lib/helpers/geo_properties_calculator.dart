@@ -56,42 +56,43 @@ class GeoPropertiesCalculator {
     return path;
   }
 
-  double calculateAspectWithElevation(ContextPoint point1, ContextPoint point2,
-      ContextPoint point3, ContextPoint point4) {
-    final dx1 = point2.point.longitude - point1.point.longitude;
-    final dy1 = point2.point.latitude - point1.point.latitude;
-    final dx2 = point3.point.longitude - point2.point.longitude;
-    final dy2 = point3.point.latitude - point2.point.latitude;
-    final dx3 = point4.point.longitude - point3.point.longitude;
-    final dy3 = point4.point.latitude - point3.point.latitude;
+  double calculateAzimuth(LatLng point1, LatLng point2) {
+    var azimuth = atan2(
+        sin(point2.longitude - point1.longitude),
+        cos(point1.latitude) * sin(point2.latitude) -
+            sin(point1.latitude) *
+                cos(point2.latitude) *
+                cos(point2.longitude - point1.longitude));
+    // convert radians to degrees
+    azimuth = azimuth * (180 / pi);
 
-    final dElevation1 = point2.elevation - point1.elevation;
-    final dElevation2 = point3.elevation - point2.elevation;
-    final dElevation3 = point4.elevation - point3.elevation;
+    // if azimuth is negative, we normalize it
+    if (azimuth < 0.0) azimuth += 360;
 
-    // Calculate the aspect using elevation differences and weighted average of arctangents
-    final aspect = atan2(
-            (dElevation1 * dx3 + dElevation2 * dx1 + dElevation3 * dx2),
-            (dElevation1 * dy3 + dElevation2 * dy1 + dElevation3 * dy2)) *
-        (180 / pi);
+    return azimuth;
+  }
 
-    // adjust the aspect to be between 0 and 360
-    final adjustedAspect = (aspect + 360) % 360;
+  double calculateAspect(ContextPoint point1, ContextPoint point2) {
+    // calculate aspect using azimuth and slope
+    final azimuth = calculateAzimuth(point1.point, point2.point);
 
-    return adjustedAspect;
+    if (point2.elevation > point1.elevation) {
+      // ascending, so the aspect is the opposite of the azimuth
+      return (azimuth + 180) % (360);
+    } else {
+      // descending, so the aspect is the same as the azimuth
+      return azimuth;
+    }
   }
 
   List<ContextPoint> calculatePathAspect(List<ContextPoint> path) {
     final aspects = <double>[];
 
-    for (var i = 0; i < path.length - 3; i++) {
+    for (var i = 0; i < path.length - 1; i++) {
       final point1 = path[i];
       final point2 = path[i + 1];
-      final point3 = path[i + 2];
-      final point4 = path[i + 3];
 
-      final aspect =
-          calculateAspectWithElevation(point1, point2, point3, point4);
+      double aspect = calculateAspect(point1, point2);
 
       path[i + 1].aspect = aspect;
     }
