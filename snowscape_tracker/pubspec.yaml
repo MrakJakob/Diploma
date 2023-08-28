@@ -56,9 +56,8 @@ dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/mountain.png"
-  adaptive_icon_background: "assets/adaptive_icon_background_color.png"
-  adaptive_icon_foreground: "assets/mountain.png"
+  remove_alpha_ios: true
+  image_path: "assets/launcher_icon.png"
 
 flutter_native_splash:
   color: "#1dd4ce"
@@ -96,6 +95,7 @@ flutter:
     - assets/Explore_instructions1.png
     - assets/Explore_instructions2.png
     - assets/adaptive_icon_background_color.png
+    - assets/launcher_icon.png
     - .env
   # To add assets to your application, add an assets section, like this:
   # assets:
