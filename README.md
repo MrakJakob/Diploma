@@ -55,8 +55,7 @@ This collaborative feature empowers users to make well-informed decisions for th
 Our Ski Touring Companion App bridges the gap between outdoor adventure and technology, offering ski tourers a reliable and community-driven tool for navigating the mountains confidently and safely.
 
 ### 🎥 DEMO
-<video width="640" height="360" controls>
-  <source src="./demo_presentation/App_DEMO_presentation.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/244f3775-784f-4c86-a224-45b9becc7b39
+
+
 
